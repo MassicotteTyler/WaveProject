@@ -15,18 +15,21 @@ namespace WaveProject
 {
 
 
-    public partial class Form1 : Form
+    public partial class GUI : Form
     {
 
         [DllImport("DFT.dll")]
 
         public static extern unsafe IntPtr DFTDLL();
         private WavReader reader;
+        private Handler handle;
 
-        public Form1()
+
+        public GUI()
         {
             InitializeComponent();
             reader = new WavReader();
+            handle = new Handler();
         }
 
         private void chart1_Click(object sender, EventArgs e)

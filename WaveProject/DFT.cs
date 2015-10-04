@@ -40,26 +40,26 @@ namespace WaveProject
             double length = Math.Sqrt(Math.Pow(real, 2) + Math.Pow(ima, 2));
             return length;
         }
-        public void _dft(byte[] samples, int n)
+        public void _dft(byte[] samples, int num_samples)
         {
-            int k, i;
+            int k, i, n;
             Random rnd = new Random();
-            float[] x = new float[16];
-            float[] Xre = new float[16];
-            float[] Xim = new float[16];
-            float[] P = new float[16];
+            float[] x = new float[num_samples];
+            float[] Xre = new float[num_samples];
+            float[] Xim = new float[num_samples];
+            float[] P = new float[num_samples];
 
             for (n = 0; n < 16; n++) x[n] = (float)(2.0 * rnd.Next(-2, 2));
 
-            for (k = 0; k < 16; ++k)
+            for (k = 0; k < num_samples; ++k)
             {
-                //Real
                 Xre[k] = 0;
-                for (n = 0; n < 16; ++n) Xre[k] += (float)(x[n] * Math.Cos(n * k * 6.2832 / 16));
-
-                //Imaginary
                 Xim[k] = 0;
-                for (n = 0; n < 16; ++n) Xim[k] -= (float)(x[n] * Math.Sin(n * k * 6.2832 / 16));
+                for (n = 0; n < num_samples; ++n)
+                {
+                    Xre[k] += (float)(x[n] * Math.Cos(n * k * 6.2832 / num_samples));
+                    Xim[k] -= (float)(x[n] * Math.Sin(n * k * 6.2832 / num_samples));
+                }
 
                 P[k] = Xre[k] * Xre[k] + Xim[k] * Xim[k];
 

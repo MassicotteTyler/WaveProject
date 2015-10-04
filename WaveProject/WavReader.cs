@@ -9,9 +9,11 @@ namespace WaveProject
 {
     class WavReader
     {
-        public Byte[] readFile(Stream stream)
+        public Byte[] readFile(Stream stream, out double[] left, out double[] right)
         {
             Byte[] wav;
+            left = null;
+            right = null;
             BinaryReader reader = new BinaryReader(stream);
 
             //Read the wave file header from the buffer. 
@@ -37,15 +39,49 @@ namespace WaveProject
 
             int dataID = reader.ReadInt32();
             int dataSize = reader.ReadInt32();
-
+            int num_samples = dataSize / (channels * bitDepth / 8);
 
             // Store the audio data of the wave file to a byte array. 
 
             wav = reader.ReadBytes(dataSize);
 
             //After this you have to split that byte array for each channel (Left, Right)
+            //only worrying about dual channel for now
+            if (channels == 1)
+            {
+                left = new double[num_samples];
+            }
+            else if (channels == 2)
+            {
+                left = new double[num_samples/2];
+                right = new double[num_samples/2];
+            }
+            int i = 0;
+            int pos = 0;
+            while (pos < wav.Length)
+            {
+                left[i] = byteToDouble(wav[pos], wav[pos + 1]);
+                pos += 2;
+                if (channels == 2)
+                {
+                    right[i] = byteToDouble(wav[pos], wav[pos + 1]);
+                    pos += 2;
+                }
+                i++;
+
+            }
+
+
             //Wav supports many channels, so you have to read channel from header
             return wav;
         }
+
+        static double byteToDouble(byte firstByte, byte secondByte)
+        {
+            short s = (short)((secondByte << 8) | firstByte);
+            return s / 32768.0;
+        }
     }
+
+    
 }
