@@ -91,14 +91,23 @@ namespace WaveProject
         private void menuOpenFile_Click(object sender, EventArgs e)
         { 
             Stream stream = null;
+            double[] real;
+            double[] ima;
+            byte[] samples = null;
             OpenFileDialog ofd = new OpenFileDialog();
             if (!(ofd.ShowDialog() == DialogResult.Cancel))
             { 
                 stream = ofd.OpenFile();
-                reader.readFile(stream);
+                if (stream.CanRead)
+                samples = reader.readFile(stream,out real,out ima);
             }
             else
                 ofd.Dispose();
+            for (int i = 1; i < samples.Length; i++)
+            {
+                chart1.Series["Magnitude"].Points.AddXY(i, samples[i]);
+                chart2.Series["Wave"].Points.AddXY(i, samples[i]);
+            }
         }
     }
 }
