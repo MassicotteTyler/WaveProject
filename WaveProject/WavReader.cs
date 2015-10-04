@@ -15,7 +15,6 @@ namespace WaveProject
             left = null;
             right = null;
             BinaryReader reader = new BinaryReader(stream);
-
             //Read the wave file header from the buffer. 
 
             int chunkID = reader.ReadInt32();
@@ -28,6 +27,8 @@ namespace WaveProject
             int sampleRate = reader.ReadInt32();
             int fmtAvgBPS = reader.ReadInt32();
             int fmtBlockAlign = reader.ReadInt16();
+            int subChunk2id = reader.ReadInt16();
+            int subChun2Size = reader.ReadInt16();
             int bitDepth = reader.ReadInt16();
 
             if (fmtSize == 18)
@@ -39,7 +40,7 @@ namespace WaveProject
 
             int dataID = reader.ReadInt32();
             int dataSize = reader.ReadInt32();
-            int num_samples = dataSize / (channels * bitDepth / 8);
+            int num_samples = (dataSize / (channels * bitDepth)) / 8;
 
             // Store the audio data of the wave file to a byte array. 
 
