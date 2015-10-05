@@ -29,6 +29,7 @@ namespace WaveProject
             int fmtBlockAlign = reader.ReadInt16();
             int subChunk2id = reader.ReadInt16();
             int subChun2Size = reader.ReadInt16();
+            int test = reader.ReadInt16();
             int bitDepth = reader.ReadInt16();
 
             if (fmtSize == 18)
@@ -40,7 +41,7 @@ namespace WaveProject
 
             int dataID = reader.ReadInt32();
             int dataSize = reader.ReadInt32();
-            int num_samples = (dataSize / (channels * bitDepth)) / 8;
+            int num_samples = (dataSize / (channels * bitDepth));
 
             // Store the audio data of the wave file to a byte array. 
 
@@ -59,7 +60,7 @@ namespace WaveProject
             }
             int i = 0;
             int pos = 0;
-            while (pos < wav.Length)
+            while (pos < wav.Length-1)
             {
                 left[i] = byteToDouble(wav[pos], wav[pos + 1]);
                 pos += 2;
