@@ -58,6 +58,7 @@
     <Compile Include="Handler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Wav.cs" />
     <Compile Include="WavReader.cs" />
     <Compile Include="WavWriter.cs" />
     <EmbeddedResource Include="GUI.resx">

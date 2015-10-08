@@ -22,14 +22,22 @@ namespace WaveProject
 
         public static extern unsafe IntPtr DFTDLL();
         private WavReader reader;
+        private WavWriter writer;
         private Handler handle;
+        private DFT dft;
+        private Wav wav;
 
 
         public GUI()
         {
             InitializeComponent();
             reader = new WavReader();
+            writer = new WavWriter();
             handle = new Handler();
+            dft = new DFT();
+            chart2.ChartAreas[0].CursorX.IsUserEnabled = true;
+            chart2.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
+            chart2.ChartAreas[0].AxisX.ScaleView.Zoomable = false;
         }
 
         private void chart1_Click(object sender, EventArgs e)
@@ -39,6 +47,7 @@ namespace WaveProject
 
         private void button1_Click_1(object sender, EventArgs e)
         {
+            chart2.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
 
         }
 
@@ -57,26 +66,43 @@ namespace WaveProject
         }
 
         private void menuOpenFile_Click(object sender, EventArgs e)
-        { 
+        {
             Stream stream = null;
-            double[] real;
+            double[] real = null;
             double[] ima;
             byte[] samples = null;
             OpenFileDialog ofd = new OpenFileDialog();
             if (!(ofd.ShowDialog() == DialogResult.Cancel))
-            { 
+            {
                 stream = ofd.OpenFile();
                 if (stream.CanRead)
-                samples = reader.readFile(stream,out real,out ima);
+                    samples = reader.readFile(stream, out real, out ima, out wav);
             }
             else
+            { 
                 ofd.Dispose();
+                return;
+            }
+            //dft._dft(real, real.Length);
             for (int i = 1; i < samples.Length; i++)
             {
                 chart1.Series["Magnitude"].Points.AddXY(i, samples[i]);
-                chart2.Series["Wave"].Points.AddXY(i, samples[i]);
+                chart2.Series["Wave"].Points.AddXY(i, real[i]);
             }
-            chart2.ChartAreas[0].AxisX.ScaleView.Size = 100;
+        }
+
+        private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void saveAs_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog dia = new SaveFileDialog();
+            DialogResult result = new DialogResult();
+            result = dia.ShowDialog();
+            string fileName = dia.FileName;
+            writer.writeFile(wav, fileName);
         }
     }
 }

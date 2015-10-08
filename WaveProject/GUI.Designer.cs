@@ -43,6 +43,8 @@
             this.button1 = new System.Windows.Forms.Button();
             this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveAs = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
@@ -64,7 +66,8 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuOpenFile});
+            this.menuOpenFile,
+            this.saveAs});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -72,7 +75,7 @@
             // menuOpenFile
             // 
             this.menuOpenFile.Name = "menuOpenFile";
-            this.menuOpenFile.Size = new System.Drawing.Size(109, 22);
+            this.menuOpenFile.Size = new System.Drawing.Size(152, 22);
             this.menuOpenFile.Text = "Open..";
             this.menuOpenFile.Click += new System.EventHandler(this.menuOpenFile_Click);
             // 
@@ -143,6 +146,17 @@
             this.openFileDialog1.FileName = "openFileDialog";
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
             // 
+            // saveAs
+            // 
+            this.saveAs.Name = "saveAs";
+            this.saveAs.Size = new System.Drawing.Size(152, 22);
+            this.saveAs.Text = "Save as";
+            this.saveAs.Click += new System.EventHandler(this.saveAs_Click);
+            // 
+            // saveFileDialog
+            // 
+            this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
+            // 
             // GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -175,6 +189,8 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chart2;
         private System.Windows.Forms.ToolStripMenuItem menuOpenFile;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.ToolStripMenuItem saveAs;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog;
     }
 }
 
