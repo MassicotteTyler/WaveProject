@@ -30,19 +30,14 @@ namespace WaveProject
             writer.Write(file.head.bitDepth);
 
             //Write the data chunk
-            writer.Write(file.head.dataID);
+            writer.Write(System.Text.Encoding.ASCII.GetBytes("data"));
             writer.Write(file.head.dataSize);
 
 
             byte[] data = file.getData();
 
-            for (int i = 0; i < file.head.dataSize / file.head.fmtBlockAlign; i++)
-            {
-                if (i < data.Length)
-                    writer.Write((ushort)data[i]);
-                else
-                    writer.Write(0);
-            }
+            writer.Write(data);
+
             //writer.Seek(4, SeekOrigin.Begin);
             //uint filesize = (uint)writer.BaseStream.Length;
             //writer.Write(filesize - 8);

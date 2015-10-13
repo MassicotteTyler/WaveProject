@@ -20,7 +20,7 @@ namespace WaveProject
             public uint sampleRate;
             public uint fmtAvgBPS;
             public ushort fmtBlockAlign;
-            public uint bitDepth;
+            public ushort bitDepth;
 
             public int fmtExtraSize;
 

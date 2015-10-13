@@ -52,7 +52,7 @@ namespace WaveProject
 
             //waveFile.head.dataID = reader.ReadInt32();
             //waveFile.head.dataSize = reader.ReadInt32();
-            waveFile.num_samples = (waveFile.head.dataSize /
+            waveFile.num_samples = (uint)(waveFile.head.dataSize /
                          (waveFile.head.channels * waveFile.head.bitDepth) / 8);
 
 
