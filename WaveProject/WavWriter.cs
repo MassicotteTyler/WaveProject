@@ -27,20 +27,25 @@ namespace WaveProject
             writer.Write(file.head.sampleRate);
             writer.Write(file.head.fmtAvgBPS);
             writer.Write(file.head.fmtBlockAlign);
-            writer.Write(file.head.subChunk2id);
             writer.Write(file.head.bitDepth);
 
             //Write the data chunk
             writer.Write(file.head.dataID);
             writer.Write(file.head.dataSize);
 
-            foreach (byte by in file.getData())
+
+            byte[] data = file.getData();
+
+            for (int i = 0; i < file.head.dataSize / file.head.fmtBlockAlign; i++)
             {
-                writer.Write(by);
+                if (i < data.Length)
+                    writer.Write((ushort)data[i]);
+                else
+                    writer.Write(0);
             }
-            writer.Seek(4, SeekOrigin.Begin);
-            uint filesize = (uint)writer.BaseStream.Length;
-            writer.Write(filesize - 8);
+            //writer.Seek(4, SeekOrigin.Begin);
+            //uint filesize = (uint)writer.BaseStream.Length;
+            //writer.Write(filesize - 8);
 
             writer.Close();
             fileStream.Close();

@@ -10,28 +10,26 @@ namespace WaveProject
     {
         public class Header
         {
-            public int chunkID;
-            public int fileSize;
-            public int riffType;
-            public int fmtID;
-            public int fmtSize;
-            public int fmtCode;
-            public int channels;
-            public int sampleRate;
-            public int fmtAvgBPS;
-            public int fmtBlockAlign;
-            public int subChunk2id;
-            public int subChunk2Size;
-            public int bitDepth;
+            public byte[] chunkID;
+            public uint fileSize;
+            public byte[] riffType;
+            public byte[] fmtID;
+            public uint fmtSize;
+            public ushort fmtCode;
+            public ushort channels;
+            public uint sampleRate;
+            public uint fmtAvgBPS;
+            public ushort fmtBlockAlign;
+            public uint bitDepth;
 
             public int fmtExtraSize;
 
-            public int dataID;
-            public int dataSize;
+            public byte[] dataID;
+            public uint dataSize;
 
 
         }
-            public int num_samples;
+            public uint num_samples;
 
             byte[] data;
 

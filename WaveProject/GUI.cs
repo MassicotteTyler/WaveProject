@@ -83,10 +83,16 @@ namespace WaveProject
                 ofd.Dispose();
                 return;
             }
-            //dft._dft(real, real.Length);
-            for (int i = 1; i < samples.Length; i++)
+            if (wav == null)
             {
-                chart1.Series["Magnitude"].Points.AddXY(i, samples[i]);
+                MessageBox.Show("Only 16bit PCM wav files", "Wav format error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            //dft._dft(real, real.Length);
+            for (int i = 1; i < real.Length; i++)
+            {
+                //chart1.Series["Magnitude"].Points.AddXY(i, samples[i]);
                 chart2.Series["Wave"].Points.AddXY(i, real[i]);
             }
         }

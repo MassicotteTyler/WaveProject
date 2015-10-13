@@ -3,39 +3,67 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
+//using System.Numerics;
 
 namespace WaveProject
 {
     class DFT
     {
-        public Complex[] Dft(object samples, int n)
+        public class Complex
         {
-            double t = 0;
-            double c = 0;
-            double s = 0;
-            double f = 0;
-            Complex[] output = new Complex[n];
-            double[] real = new double[n];
-            double[] ima = new double[n];
+            public double real;
+            public double ima;
 
-            for (f = 0; f < n; f++)
+            public Complex()
             {
-                for (t = 0; t < n; t++)
+                real = 0;
+                ima = 0;
+            }
+
+            public Complex(double r, double i)
+            {
+                real = r;
+                ima = i;
+            }
+
+            public static Complex Polar(double r, double i)
+            {
+                double pythag = Math.Sqrt(Math.Pow(r, 2) + (Math.Pow(i, 2)));
+                double angle = Math.Atan(i / r);
+                return new Complex(pythag * Math.Cos(angle), pythag * Math.Sin(angle));
+            }
+        }
+
+        public Complex[] Dft(Complex[] samples)
+        {
+            int N = samples.Length;
+
+            Complex[] output = new Complex[N];
+
+            double arg = -2.0 * Math.PI / (double)N;
+
+            for (int k = 0; k < N; k++)
+            {
+                double sumreal = 0;
+                double sumimag = 0;
+                for (int t = 0; t < N; t++)
                 {
-                    real[(int)f] += (double) Math.Cos(2 * Math.PI * t * (f / n));
-                    ima[(int)f] += (double)Math.Sin(2 * Math.PI * t * (f / n));
+                    double angle = 2 * Math.PI * t * k / N;
+                    sumreal += samples[t].real * Math.Cos(angle) + samples[t].ima * Math.Sin(angle);
+                    sumimag += -samples[t].real * Math.Sin(angle) + samples[t].ima * Math.Cos(angle);
                 }
-                output[(int)f] = new Complex(real[(int)f], ima[(int)f]);
+                output[k].real = sumreal;
+                output[k].ima = sumimag;
             }
             return output;
+            
         }
 
         //Calculates the length of the complex vector using pythag
         public double calc_length(Complex num)
         {
-            double real = num.Real;
-            double ima = num.Imaginary;
+            double real = num.real;
+            double ima = num.ima;
 
             double length = Math.Sqrt(Math.Pow(real, 2) + Math.Pow(ima, 2));
             return length;

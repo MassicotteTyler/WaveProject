@@ -13,40 +13,58 @@ namespace WaveProject
         public Byte[] readFile(Stream stream, out double[] left, out double[] right, out Wav file)
         { 
             Wav waveFile = new Wav();
+            List<short> lData = new List<short>();
+            List<short> rData = new List<short>();
+
             left = null;
             right = null;
             BinaryReader reader = new BinaryReader(stream);
             //Read the wave file header from the buffer
 
-            waveFile.head.chunkID = reader.ReadInt32();
-            waveFile.head.fileSize = reader.ReadInt32();
-            waveFile.head.riffType = reader.ReadInt32();
-            waveFile.head.fmtID = reader.ReadInt32();
-            waveFile.head.fmtSize = reader.ReadInt32();
-            waveFile.head.fmtCode = reader.ReadInt16();
-            waveFile.head.channels = reader.ReadInt16();
-            waveFile.head.sampleRate = reader.ReadInt32();
-            waveFile.head.fmtAvgBPS = reader.ReadInt32();
-            waveFile.head.fmtBlockAlign = reader.ReadInt16();
-            waveFile.head.subChunk2id = reader.ReadInt16();
-            waveFile.head.subChunk2Size = reader.ReadInt16();
-            waveFile.head.bitDepth = reader.ReadInt16();
+            waveFile.head.chunkID = reader.ReadBytes(4);
+            waveFile.head.fileSize = reader.ReadUInt32();
+            waveFile.head.riffType = reader.ReadBytes(4);
+            waveFile.head.fmtID = reader.ReadBytes(4);
+            waveFile.head.fmtSize = reader.ReadUInt32();
+            waveFile.head.fmtCode = reader.ReadUInt16();
+            waveFile.head.channels = reader.ReadUInt16();
+            waveFile.head.sampleRate = reader.ReadUInt32();
+            waveFile.head.fmtAvgBPS = reader.ReadUInt32();
+            waveFile.head.fmtBlockAlign = reader.ReadUInt16();
+            //waveFile.head.subChunk2id = reader.ReadInt16();
+            //waveFile.head.subChunk2Size = reader.ReadInt16();
+            waveFile.head.bitDepth = reader.ReadUInt16();
+            waveFile.head.dataID = reader.ReadBytes(4);
+            waveFile.head.dataSize = reader.ReadUInt32();
 
-            if (waveFile.head.fmtSize == 18)
+
+            if (waveFile.head.fmtSize != 16) //only fmt to read for now
+            {
+                file = null;
+                return null; 
+            }
+            if (waveFile.head.fmtSize == 18) //implement later
             {
                 // Read any extra values
                 waveFile.head.fmtExtraSize = reader.ReadInt16();
                 reader.ReadBytes(waveFile.head.fmtExtraSize);
             }
 
-            waveFile.head.dataID = reader.ReadInt32();
-            waveFile.head.dataSize = reader.ReadInt32();
-            waveFile.num_samples = (waveFile.head.dataSize / 
+            //waveFile.head.dataID = reader.ReadInt32();
+            //waveFile.head.dataSize = reader.ReadInt32();
+            waveFile.num_samples = (waveFile.head.dataSize /
                          (waveFile.head.channels * waveFile.head.bitDepth) / 8);
+
 
             // Store the audio data of the wave file to a byte array. 
 
-            waveFile.setData(reader.ReadBytes(waveFile.head.dataSize));
+            //for (int j = 0; j < waveFile.head.dataSize / waveFile.head.fmtBlockAlign; j++)
+            //{
+            //    lData.Add((short)reader.ReadUInt16());
+            //    rData.Add((short)reader.ReadUInt16());
+            //}
+
+            waveFile.setData(reader.ReadBytes((int)waveFile.head.dataSize/ waveFile.head.fmtBlockAlign));
 
             //After this you have to split that byte array for each channel (Left, Right)
             //only worrying about dual channel for now
@@ -61,7 +79,7 @@ namespace WaveProject
             }
             int i = 0;
             int pos = 0;
-            while (pos < waveFile.getData().Length-1)
+            while (pos < waveFile.getData().Length-1 && i < left.Length-1)
             {
                 left[i] = byteToDouble(waveFile.getData()[pos], waveFile.getData()[pos + 1]);
                 pos += 2;
