@@ -68,16 +68,14 @@ namespace WaveProject
             double length = Math.Sqrt(Math.Pow(real, 2) + Math.Pow(ima, 2));
             return length;
         }
-        public void _dft(double[] samples, int num_samples)
+        public double[] _dft(double[] samples, int num_samples, out double[] power)
         {
-            int k, i, n;
-            Random rnd = new Random();
+            int k, n;
             double[] x = samples; 
             double[] Xre = new double[num_samples];
             double[] Xim = new double[num_samples];
             double[] P = new double[num_samples];
 
-            //for (n = 0; n < 16; n++) x[n] = (float)(2.0 * rnd.Next(-2, 2));
 
             for (k = 0; k < num_samples; ++k)
             {
@@ -89,9 +87,11 @@ namespace WaveProject
                     Xim[k] -= (x[n] * Math.Sin(n * k * 6.2832 / num_samples));
                 }
 
-                P[k] = Xre[k] * Xre[k] + Xim[k] * Xim[k];
+                P[k] = (Xre[k] * Xre[k]) + (Xim[k] * Xim[k]);
 
             }
+            power = P;
+            return Xre;
         }
     }
 }

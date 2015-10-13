@@ -11,7 +11,7 @@ namespace WaveProject
         private WavReader reader;
         private WavWriter writer;
         private DFT dft;
-
+        public double[] copyData;
         public Handler()
         {
 

@@ -45,12 +45,6 @@ namespace WaveProject
 
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-            chart2.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
-
-        }
-
         private void chart2_Click(object sender, EventArgs e)
         {
         }
@@ -69,7 +63,8 @@ namespace WaveProject
         {
             Stream stream = null;
             double[] real = null;
-            double[] ima;
+            double[] mag = null;
+            double[] ima = null;
             byte[] samples = null;
             OpenFileDialog ofd = new OpenFileDialog();
             if (!(ofd.ShowDialog() == DialogResult.Cancel))
@@ -89,11 +84,16 @@ namespace WaveProject
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            //dft._dft(real, real.Length);
-            for (int i = 1; i < real.Length; i++)
+            real = dft._dft(real, real.Length,out mag);
+            drawChart(real);
+
+            wav.real = real;
+            wav.ima = ima;
+            wav.mag = mag;
+
+            for (int j = 1; j < mag.Length/2; j++)
             {
-                //chart1.Series["Magnitude"].Points.AddXY(i, samples[i]);
-                chart2.Series["Wave"].Points.AddXY(i, real[i]);
+                chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
             }
         }
 
@@ -106,9 +106,69 @@ namespace WaveProject
         {
             SaveFileDialog dia = new SaveFileDialog();
             DialogResult result = new DialogResult();
-            result = dia.ShowDialog();
+            if ((result = dia.ShowDialog()) == DialogResult.Cancel)
+                return;
             string fileName = dia.FileName;
             writer.writeFile(wav, fileName);
+        }
+
+        private void zoomButton_Click(object sender, EventArgs e)
+        {
+            chart2.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+        }
+
+        private void selectButton_Click(object sender, EventArgs e)
+        {
+            chart2.ChartAreas[0].AxisX.ScaleView.Zoomable = false;
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int start = (int)chart2.ChartAreas[0].CursorX.SelectionStart;
+            int end = (int)chart2.ChartAreas[0].CursorX.SelectionEnd;
+            if ((start - end) == 0)
+                return;
+            if (start < end)
+                handle.copyData = wav.copy(start, end);
+            else
+                handle.copyData = wav.copy(end, start);
+        }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (handle.copyData == null)
+                return;
+
+            int index = (int)chart2.ChartAreas[0].CursorX.SelectionStart;
+
+            wav.paste(handle.copyData, index);
+            
+            drawChart(wav.real);
+
+        }
+
+        private void drawChart(double[] data)
+        {
+            chart2.Series["Wave"].Points.Clear();
+            for (int i = 1; i < data.Length / 2; i++)
+            {
+                chart2.Series["Wave"].Points.AddXY(i, data[i]);
+            }
+        }
+
+        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int start = (int)chart2.ChartAreas[0].CursorX.SelectionStart;
+            int end = (int)chart2.ChartAreas[0].CursorX.SelectionEnd;
+
+            if ((start - end) == 0)
+                return;
+
+            if (start < end)
+                handle.copyData = wav.cut(start, end);
+            else
+                handle.copyData = wav.cut(end, start);
+            drawChart(wav.real);
         }
     }
 }

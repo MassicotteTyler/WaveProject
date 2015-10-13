@@ -13,8 +13,6 @@ namespace WaveProject
         public Byte[] readFile(Stream stream, out double[] left, out double[] right, out Wav file)
         { 
             Wav waveFile = new Wav();
-            List<short> lData = new List<short>();
-            List<short> rData = new List<short>();
 
             left = null;
             right = null;
