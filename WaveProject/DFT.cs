@@ -83,8 +83,8 @@ namespace WaveProject
                 Xim[k] = 0;
                 for (n = 0; n < num_samples; ++n)
                 {
-                    Xre[k] += (x[n] * Math.Cos(n * k * 6.2832 / num_samples));
-                    Xim[k] -= (x[n] * Math.Sin(n * k * 6.2832 / num_samples));
+                    Xre[k] += (x[n] * Math.Cos(n * k * -6.2832 / num_samples));
+                    Xim[k] -= (x[n] * Math.Sin(n * k * -6.2832 / num_samples));
                 }
 
                 P[k] = (Xre[k] * Xre[k]) + (Xim[k] * Xim[k]);
