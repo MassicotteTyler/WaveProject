@@ -85,8 +85,8 @@ namespace WaveProject
                 return;
             }
             real = dft._dft(real, real.Length,out mag);
-            drawChart(real);
-
+            //drawChart(real);
+            drawChart(wav.getData());
             wav.real = real;
             wav.ima = ima;
             wav.mag = mag;
@@ -148,6 +148,15 @@ namespace WaveProject
         }
 
         private void drawChart(double[] data)
+        {
+            chart2.Series["Wave"].Points.Clear();
+            for (int i = 1; i < data.Length / 2; i++)
+            {
+                chart2.Series["Wave"].Points.AddXY(i, data[i]);
+            }
+        }
+
+        private void drawChart(byte[] data)
         {
             chart2.Series["Wave"].Points.Clear();
             for (int i = 1; i < data.Length / 2; i++)
