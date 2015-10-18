@@ -19,7 +19,7 @@ extern "C"
 short* Record()
 {
 	const int sampleRate = 11025;
-	const int num_inputs = 11025 * 10; // 10 seconds
+	int num_inputs = sampleRate * 10; // 10 seconds
 
 	HWAVEIN hWaveIn;
 	WAVEHDR WaveInHdr;
@@ -69,7 +69,7 @@ short* Record()
 		return 0;
 	}
 
-	do {} while (waveInUnprepareHeader(hWaveIn, &WaveInHdr, sizeof(WAVEHDR)) == WAVERR_STILLPLAYING);
+	while (waveInUnprepareHeader(hWaveIn, &WaveInHdr, sizeof(WAVEHDR)) == WAVERR_STILLPLAYING);
 
 	waveInClose(hWaveIn);
 

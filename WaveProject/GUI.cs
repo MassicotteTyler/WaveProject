@@ -18,9 +18,9 @@ namespace WaveProject
     public partial class GUI : Form
     {
 
-        [DllImport("DFT.dll")]
+        [DllImport("Win32.dll")]
 
-        public static extern unsafe IntPtr DFTDLL();
+        public static extern unsafe short* RECORDDLL();
         private WavReader reader;
         private WavWriter writer;
         private Handler handle;
@@ -85,8 +85,8 @@ namespace WaveProject
                 return;
             }
             real = dft._dft(real, real.Length,out mag);
-            //drawChart(real);
-            drawChart(wav.getData());
+            drawChart(real);
+            //drawChart(wav.getData());
             wav.real = real;
             wav.ima = ima;
             wav.mag = mag;
@@ -178,6 +178,15 @@ namespace WaveProject
             else
                 handle.copyData = wav.cut(end, start);
             drawChart(wav.real);
+        }
+
+        private void recordButton_Click(object sender, EventArgs e)
+        {
+            unsafe
+            {
+                short* data;
+                data = RECORDDLL();
+            }
         }
     }
 }
