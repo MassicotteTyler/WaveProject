@@ -50,6 +50,7 @@
             this.zoomButton = new System.Windows.Forms.Button();
             this.selectButton = new System.Windows.Forms.Button();
             this.recordButton = new System.Windows.Forms.Button();
+            this.stopButton = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
@@ -207,11 +208,22 @@
             this.recordButton.UseVisualStyleBackColor = true;
             this.recordButton.Click += new System.EventHandler(this.recordButton_Click);
             // 
+            // stopButton
+            // 
+            this.stopButton.Location = new System.Drawing.Point(820, 146);
+            this.stopButton.Name = "stopButton";
+            this.stopButton.Size = new System.Drawing.Size(75, 23);
+            this.stopButton.TabIndex = 7;
+            this.stopButton.Text = "Stop";
+            this.stopButton.UseVisualStyleBackColor = true;
+            this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
+            // 
             // GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(977, 575);
+            this.Controls.Add(this.stopButton);
             this.Controls.Add(this.recordButton);
             this.Controls.Add(this.selectButton);
             this.Controls.Add(this.zoomButton);
@@ -248,6 +260,7 @@
         private System.Windows.Forms.Button zoomButton;
         private System.Windows.Forms.Button selectButton;
         private System.Windows.Forms.Button recordButton;
+        private System.Windows.Forms.Button stopButton;
     }
 }
 

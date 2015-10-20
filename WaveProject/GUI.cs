@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.IO;
@@ -26,7 +27,7 @@ namespace WaveProject
         private Handler handle;
         private DFT dft;
         private Wav wav;
-
+        Thread t1;
 
         public GUI()
         {
@@ -34,6 +35,7 @@ namespace WaveProject
             reader = new WavReader();
             writer = new WavWriter();
             handle = new Handler();
+            t1 = new Thread(new ThreadStart(call_record));
             dft = new DFT();
             chart2.ChartAreas[0].CursorX.IsUserEnabled = true;
             chart2.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
@@ -181,12 +183,24 @@ namespace WaveProject
         }
 
         private void recordButton_Click(object sender, EventArgs e)
+        { 
+
+            t1.Start();
+        }
+
+        private void stopButton_Click(object sender, EventArgs e)
         {
-            unsafe
-            {
-                short* data;
-                data = RECORDDLL();
-            }
+            handle.stop();
+            if (handle.recordData != null)
+                drawChart(handle.recordData);
+            else
+                Console.Write("Record data null");
+        }
+
+        private void call_record()
+        {
+            byte[] temp = handle.Record();
+            handle.recordData = temp;
         }
     }
 }

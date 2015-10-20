@@ -6,17 +6,22 @@
 #define BUFFER_SIZE 16384
 short* Record();
 short int waveIn[11025 * 10]; //10 seconds
+//
+//extern "C"
+//{
+//	__declspec(dllexport) void RECORDDLL()
+//	{
+//		Record();
+//	}
+//}
 
-extern "C"
+int WINAPI DllMain(HINSTANCE hInstance, DWORD fdwReason, PVOID pvReserved)
 {
-	__declspec(dllexport) void RECORDDLL()
-	{
-		Record();
-	}
+	return TRUE;
 }
 
 
-short* Record()
+__declspec(dllexport) short* Record()
 {
 	const int sampleRate = 11025;
 	int num_inputs = sampleRate * 10; // 10 seconds
