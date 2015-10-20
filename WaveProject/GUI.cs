@@ -223,12 +223,14 @@ namespace WaveProject
 
         private void playButton_Click(object sender, EventArgs e)
         {
-            writer.writeFile(wav, "C:\\test.wav");
-            OpenFileDialog ofd = new OpenFileDialog();
-            Stream stream = null;
-            stream = new FileStream("C:\\test.wav", FileMode.Open);
-            BinaryReader br = new BinaryReader(stream);
-            byte[] data = br.ReadBytes((int)wav.head.fileSize);
+            //writer.writeFile(wav, "C:\\test.wav");
+            //OpenFileDialog ofd = new OpenFileDialog();
+            //Stream stream = null;
+            //stream = new FileStream("C:\\test.wav", FileMode.Open);
+            //BinaryReader br = new BinaryReader(stream);
+            //byte[] data = br.ReadBytes((int)wav.head.fileSize);
+            wav.trimData();
+            byte[] data = wav.toArray();
             playData(data);
         }
     }

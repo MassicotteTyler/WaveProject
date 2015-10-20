@@ -118,7 +118,7 @@ namespace WaveProject
             format.wBitPerSample = 8;
             format.nBlockAlign = Convert.ToUInt16(format.nChannels *(format.wBitPerSample >> 3));
             format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
-            bufferLength = 16384; //format.nAvgBytesPerSec /800
+            bufferLength = 40000; //format.nAvgBytesPerSec /800 16384
             buffer = new byte[bufferLength];
             bufferPin = GCHandle.Alloc(buffer, GCHandleType.Pinned);
             format.cbSize = 0;
@@ -139,6 +139,7 @@ namespace WaveProject
             }
 
         }
+
 
         private void callbackWaveIn(IntPtr deviceHandle, uint message, IntPtr instance, ref WAVEHDR wavehdr, IntPtr reserved2)
         {

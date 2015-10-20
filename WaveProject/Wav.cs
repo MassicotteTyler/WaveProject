@@ -132,6 +132,44 @@ namespace WaveProject
             
         }
 
+        public byte[] toArray()
+        {
+            List<byte> arr = new List<byte>();
+            arr.AddRange(head.chunkID);
+            arr.AddRange(BitConverter.GetBytes(head.fileSize));
+            arr.AddRange(head.riffType);
+            arr.AddRange(head.fmtID);
+            arr.AddRange(BitConverter.GetBytes(head.fmtSize));
+            arr.AddRange(BitConverter.GetBytes(head.fmtCode));
+            arr.AddRange(BitConverter.GetBytes(head.channels));
+            arr.AddRange(BitConverter.GetBytes(head.sampleRate));
+            arr.AddRange(BitConverter.GetBytes(head.fmtAvgBPS));
+            arr.AddRange(BitConverter.GetBytes(head.fmtBlockAlign));
+            arr.AddRange(BitConverter.GetBytes(head.bitDepth));
+
+            arr.AddRange(head.dataID);
+            arr.AddRange(BitConverter.GetBytes(head.dataSize));
+            arr.AddRange(data);
+
+
+
+            return arr.ToArray();
+        }
+
+        public void trimData()
+        {
+            int i;
+            
+            for (i= 0; i < data.Length && !(data[i] == (byte)0); i++);
+
+            byte[] temp = new byte[i];
+            Array.Copy(data, temp, i);
+            data = temp;
+            head.fileSize = (uint)(36 + data.Length);
+            head.dataSize = (uint)data.Length;
+
+        }
+
 
     }
 }
