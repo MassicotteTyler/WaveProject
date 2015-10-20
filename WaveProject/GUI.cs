@@ -200,6 +200,8 @@ namespace WaveProject
                 wav.setData(handle.recordData);
                 Wav nWav = new Wav(handle.recordData);
                 wav = nWav;
+                wav.trimData();
+                drawChart(wav.getData());
 
             }
             else
@@ -229,7 +231,6 @@ namespace WaveProject
             //stream = new FileStream("C:\\test.wav", FileMode.Open);
             //BinaryReader br = new BinaryReader(stream);
             //byte[] data = br.ReadBytes((int)wav.head.fileSize);
-            wav.trimData();
             byte[] data = wav.toArray();
             playData(data);
         }
