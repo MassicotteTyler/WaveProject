@@ -41,12 +41,7 @@ namespace WaveProject
                 file = null;
                 return null; 
             }
-            if (waveFile.head.fmtSize == 18) //implement later
-            {
-                // Read any extra values
-                waveFile.head.fmtExtraSize = reader.ReadInt16();
-                reader.ReadBytes(waveFile.head.fmtExtraSize);
-            }
+
 
             //waveFile.head.dataID = reader.ReadInt32();
             //waveFile.head.dataSize = reader.ReadInt32();

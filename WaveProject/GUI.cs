@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Media;
 using System.Numerics;
 
 namespace WaveProject
@@ -31,6 +32,7 @@ namespace WaveProject
 
         public GUI()
         {
+            wav = new Wav();
             InitializeComponent();
             reader = new WavReader();
             writer = new WavWriter();
@@ -186,13 +188,20 @@ namespace WaveProject
         { 
 
             t1.Start();
+
+
         }
 
         private void stopButton_Click(object sender, EventArgs e)
         {
             handle.stop();
             if (handle.recordData != null)
-                drawChart(handle.recordData);
+            {
+                wav.setData(handle.recordData);
+                Wav nWav = new Wav(handle.recordData);
+                wav = nWav;
+
+            }
             else
                 Console.Write("Record data null");
         }
@@ -201,6 +210,26 @@ namespace WaveProject
         {
             byte[] temp = handle.Record();
             handle.recordData = temp;
+        }
+
+        private void playData(Byte[] data)
+        {
+            MemoryStream stream = new MemoryStream(data);
+            SoundPlayer player = new SoundPlayer(stream);
+            player.Play();
+
+
+        }
+
+        private void playButton_Click(object sender, EventArgs e)
+        {
+            writer.writeFile(wav, "C:\\test.wav");
+            OpenFileDialog ofd = new OpenFileDialog();
+            Stream stream = null;
+            stream = new FileStream("C:\\test.wav", FileMode.Open);
+            BinaryReader br = new BinaryReader(stream);
+            byte[] data = br.ReadBytes((int)wav.head.fileSize);
+            playData(data);
         }
     }
 }

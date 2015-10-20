@@ -51,6 +51,7 @@
             this.selectButton = new System.Windows.Forms.Button();
             this.recordButton = new System.Windows.Forms.Button();
             this.stopButton = new System.Windows.Forms.Button();
+            this.playButton = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
@@ -218,11 +219,22 @@
             this.stopButton.UseVisualStyleBackColor = true;
             this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
             // 
+            // playButton
+            // 
+            this.playButton.Location = new System.Drawing.Point(820, 175);
+            this.playButton.Name = "playButton";
+            this.playButton.Size = new System.Drawing.Size(75, 23);
+            this.playButton.TabIndex = 8;
+            this.playButton.Text = "Play";
+            this.playButton.UseVisualStyleBackColor = true;
+            this.playButton.Click += new System.EventHandler(this.playButton_Click);
+            // 
             // GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(977, 575);
+            this.Controls.Add(this.playButton);
             this.Controls.Add(this.stopButton);
             this.Controls.Add(this.recordButton);
             this.Controls.Add(this.selectButton);
@@ -261,6 +273,7 @@
         private System.Windows.Forms.Button selectButton;
         private System.Windows.Forms.Button recordButton;
         private System.Windows.Forms.Button stopButton;
+        private System.Windows.Forms.Button playButton;
     }
 }
 

@@ -47,6 +47,31 @@ namespace WaveProject
 
         }
 
+        public Wav(byte[] newData)
+        {
+            head = new Header();
+
+            head.chunkID = System.Text.Encoding.ASCII.GetBytes("RIFF");
+            head.fileSize = 36 + (uint)newData.Length;
+            head.riffType = System.Text.Encoding.ASCII.GetBytes("WAVE");
+            head.fmtID = System.Text.Encoding.ASCII.GetBytes("fmt ");
+            head.fmtSize = 16;
+            head.fmtCode = 1;
+            head.channels = 1;
+            head.sampleRate = 11025;
+            head.fmtAvgBPS = 11025;
+            head.fmtBlockAlign = 1;
+            head.bitDepth = 8;
+
+            head.dataID = System.Text.Encoding.ASCII.GetBytes("data");
+            head.dataSize = (uint)newData.Length;
+
+            data = newData;
+
+            
+
+        }
+
         public byte[] getData()
         {
             return data;
