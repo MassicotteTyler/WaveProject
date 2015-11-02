@@ -92,7 +92,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DFT.dll" />
-    <Content Include="Win32.dll" />
     <None Include="Resources\magnifier.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
