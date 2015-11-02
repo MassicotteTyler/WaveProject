@@ -42,6 +42,7 @@ namespace WaveProject
             chart2.ChartAreas[0].CursorX.IsUserEnabled = true;
             chart2.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
             chart2.ChartAreas[0].AxisX.ScaleView.Zoomable = false;
+            stopButton.Enabled = false;
         }
 
         private void chart1_Click(object sender, EventArgs e)
@@ -163,7 +164,7 @@ namespace WaveProject
         private void drawChart(byte[] data)
         {
             chart2.Series["Wave"].Points.Clear();
-            for (int i = 1; i < data.Length / 2; i++)
+            for (int i = 1; i < data.Length / 2; i+=10)
             {
                 chart2.Series["Wave"].Points.AddXY(i, data[i]);
             }
@@ -185,16 +186,18 @@ namespace WaveProject
         }
 
         private void recordButton_Click(object sender, EventArgs e)
-        { 
-
+        {
+            recordButton.Enabled = false;
+            stopButton.Enabled = true;
+            t1 = new Thread(new ThreadStart(call_record));
             t1.Start();
-
-
         }
 
         private void stopButton_Click(object sender, EventArgs e)
         {
             handle.stop();
+            recordButton.Enabled = true;
+            stopButton.Enabled = false;
             if (handle.recordData != null)
             {
                 wav.setData(handle.recordData);
@@ -206,6 +209,7 @@ namespace WaveProject
             }
             else
                 Console.Write("Record data null");
+            
         }
 
         private void call_record()
@@ -224,15 +228,10 @@ namespace WaveProject
         }
 
         private void playButton_Click(object sender, EventArgs e)
-        {
-            //writer.writeFile(wav, "C:\\test.wav");
-            //OpenFileDialog ofd = new OpenFileDialog();
-            //Stream stream = null;
-            //stream = new FileStream("C:\\test.wav", FileMode.Open);
-            //BinaryReader br = new BinaryReader(stream);
-            //byte[] data = br.ReadBytes((int)wav.head.fileSize);
-            byte[] data = wav.toArray();
-            playData(data);
+        { 
+                byte[] data = wav.toArray();
+                playData(data);
+
         }
     }
 }
