@@ -2,45 +2,75 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 //using System.Numerics;
 
 namespace WaveProject
 {
     class DFT
     {
-        public class Complex
-        {
-            public double real;
-            public double ima;
 
-            public Complex()
-            {
-                real = 0;
-                ima = 0;
-            }
 
-            public Complex(double r, double i)
-            {
-                real = r;
-                ima = i;
-            }
-
-            public static Complex Polar(double r, double i)
-            {
-                double pythag = Math.Sqrt(Math.Pow(r, 2) + (Math.Pow(i, 2)));
-                double angle = Math.Atan(i / r);
-                return new Complex(pythag * Math.Cos(angle), pythag * Math.Sin(angle));
-            }
-        }
-
-        public Complex[] Dft(Complex[] samples)
+        public Complex[] Dft(double[] samples)
         {
             int N = samples.Length;
-
+            Thread t1, t2;
+            
             Complex[] output = new Complex[N];
+            Complex[] temp1 = new Complex[N / 2];
+            Complex[] temp2 = new Complex[N / 2];
 
-            double arg = -2.0 * Math.PI / (double)N;
+            var subDft1 = new Action<double[]>(samp => 
+            {             for (int k = 0; k < N / 2 + 1; k++)
+            {
+                double sumreal = 0;
+                double sumimag = 0;
+                for (int t = 0; t < N / 2 + 1; t++)
+                {
+                    sumreal += samples[t] * Math.Cos(t * k * -6.2832 / samples.Length);
+                    sumimag -= -samples[t] * Math.Sin(t * k * -6.2832 / samples.Length);
+        }
+                output[k] = new Complex(sumreal, sumimag);
+            }
+            });
+            
+            var subDft2 = new Action<double[]>(samp =>
+            {
+                for (int k = N / 2 + 1; k < N; k++)
+                {
+                    double sumreal = 0;
+                    double sumimag = 0;
+                    for (int t = N / 2 + 1; t < N; t++)
+                    {
+                        sumreal += samples[t] * Math.Cos(t * k * -6.2832 / samples.Length);
+                        sumimag -= -samples[t] * Math.Sin(t * k * -6.2832 / samples.Length);
+                    }
+                    output[k] = new Complex(sumreal, sumimag);
+                }
+            });
+
+
+            t1 = new Thread(() => subDft1(samples), 1024 * 1024);
+            t2 = new Thread(() => subDft2(samples), 1024 * 1024);
+
+            t1.Start();
+            t2.Start();
+
+            t1.Join();
+            t2.Join();
+
+            return output;
+
+        }
+
+
+        public double[] iDft(Complex[] input)
+        {
+            int N = input.Length;
+
+            double[] output = new double[N];
+
+            double arg = 2.0 * Math.PI / (double)N;
 
             for (int k = 0; k < N; k++)
             {
@@ -48,17 +78,15 @@ namespace WaveProject
                 double sumimag = 0;
                 for (int t = 0; t < N; t++)
                 {
-                    double angle = 2 * Math.PI * t * k / N;
-                    sumreal += samples[t].real * Math.Cos(angle) + samples[t].ima * Math.Sin(angle);
-                    sumimag += -samples[t].real * Math.Sin(angle) + samples[t].ima * Math.Cos(angle);
+                    double angle = 2 * Math.PI * t * k / (double) N;
+                    sumreal += input[t].real * Math.Cos(angle);
+                    sumimag += -input[t].ima * Math.Sin(angle);
                 }
-                output[k].real = sumreal;
-                output[k].ima = sumimag;
-            }
-            return output;
-            
-        }
 
+                output[k] = (sumreal - sumimag) / N;
+             }
+                 return output;
+        }
         //Calculates the length of the complex vector using pythag
         public double calc_length(Complex num)
         {
@@ -87,11 +115,35 @@ namespace WaveProject
                     Xim[k] -= (x[n] * Math.Sin(n * k * -6.2832 / num_samples));
                 }
 
-                P[k] = (Xre[k] * Xre[k]) + (Xim[k] * Xim[k]);
+                P[k] = Math.Sqrt((Xre[k] * Xre[k]) + (Xim[k] * Xim[k]));
 
             }
             power = P;
             return Xre;
         }
+
+        public double[] createFilter(int selection, double[] samples)
+        {
+            double[] filter;
+            Complex[] temp = new Complex[samples.Length];
+
+            temp[0] = new Complex(1, 1);
+            int i, k;
+            for (i = 1, k = temp.Length - 1; i < selection; i++, k--)
+            {
+                temp[i] = new Complex(1, 1);
+                temp[k] = new Complex(1, 1) ;
+            }
+            for (i = selection; i < temp.Length / 2 + 1; i++, k--)
+            {
+                temp[i] = new Complex(0, 0);
+                temp[k] = new Complex(0, 0) ;
+            }
+
+            filter = iDft(temp);
+
+            return filter;
+        }
+
     }
 }

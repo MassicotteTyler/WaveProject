@@ -48,7 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Complex.cs" />
     <Compile Include="DFT.cs" />
+    <Compile Include="Filter.cs" />
     <Compile Include="GUI.cs">
       <SubType>Form</SubType>
     </Compile>

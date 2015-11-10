@@ -1,4 +1,5 @@
-﻿using System;
+﻿/* WavReader reads in wave file data and converts it to a Wav class file. */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace WaveProject
         public Byte[] readFile(Stream stream, out double[] left, out double[] right, out Wav file)
         { 
             Wav waveFile = new Wav();
-
+            Handler hand = new Handler();
             left = null;
             right = null;
             BinaryReader reader = new BinaryReader(stream);
@@ -63,26 +64,17 @@ namespace WaveProject
             //only worrying about dual channel for now
             if (waveFile.head.channels == 1)
             {
-                left = new double[waveFile.num_samples];
+                left = new double[waveFile.getData().Length];
             }
             else if (waveFile.head.channels == 2)
             {
                 left = new double[waveFile.num_samples/2];
                 right = new double[waveFile.num_samples/2];
             }
-            int i = 0;
-            int pos = 0;
-            while (pos < waveFile.getData().Length-1 && i < left.Length-1)
+            // for one channel
+            for (int i = 0, pos = 0; pos < waveFile.getData().Length - 2; i++, pos++)
             {
-                left[i] = byteToDouble(waveFile.getData()[pos], waveFile.getData()[pos + 1]);
-                pos += 2;
-                if (waveFile.head.channels == 2)
-                {
-                    right[i] = byteToDouble(waveFile.getData()[pos], waveFile.getData()[pos + 1]);
-                    pos += 2;
-                }
-                i++;
-
+                left[i] = hand.byteToDouble(waveFile.getData()[pos], waveFile.getData()[++pos]);
             }
 
             file = waveFile;
@@ -90,11 +82,6 @@ namespace WaveProject
             return waveFile.getData();
         }
 
-        static double byteToDouble(byte firstByte, byte secondByte)
-        {
-            short s = (short)((secondByte << 8) | firstByte);
-            return s / 32768.0;
-        }
     }
 
     

@@ -180,6 +180,27 @@ namespace WaveProject
 
         }
 
+        public double byteToDouble(byte firstByte, byte SecondByte)
+        {
+            short s = (short)((SecondByte << 8) | firstByte);
+            return s / 32768.0;
+        }
+
+        public double[] bufferByteToDouble(byte[] values)
+        {
+            double[] result = new double[values.Length / 8];
+            Buffer.BlockCopy(values, 0, result, 0, result.Length);
+            return result;
+        }
+
+        public byte[] doubleToBytes(double[] values)
+        {
+
+            byte[] result = new byte[values.Length * sizeof(double)];
+            Buffer.BlockCopy(values, 0, result, 0, result.Length);
+            return result;
+        }
+
         
     }
 }

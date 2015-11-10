@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Media;
-using System.Numerics;
 
 namespace WaveProject
 {
@@ -28,6 +27,7 @@ namespace WaveProject
         private Handler handle;
         private DFT dft;
         private Wav wav;
+        private Filter filter;
         Thread t1;
 
         public GUI()
@@ -38,10 +38,15 @@ namespace WaveProject
             writer = new WavWriter();
             handle = new Handler();
             t1 = new Thread(new ThreadStart(call_record));
+            filter = new Filter();
             dft = new DFT();
             chart2.ChartAreas[0].CursorX.IsUserEnabled = true;
             chart2.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
             chart2.ChartAreas[0].AxisX.ScaleView.Zoomable = false;
+
+            chart1.ChartAreas[0].CursorX.IsUserEnabled = true;
+            chart1.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
+            chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = false;
             stopButton.Enabled = false;
         }
 
@@ -89,9 +94,11 @@ namespace WaveProject
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            real = dft._dft(real, real.Length,out mag);
+            double[] temp = handle.bufferByteToDouble(wav.getData());
+            Complex[] samp = dft.Dft(real);
+            //drawChart(real);
             drawChart(real);
-            //drawChart(wav.getData());
+            mag = Complex.Mag(samp);
             wav.real = real;
             wav.ima = ima;
             wav.mag = mag;
@@ -155,7 +162,7 @@ namespace WaveProject
         private void drawChart(double[] data)
         {
             chart2.Series["Wave"].Points.Clear();
-            for (int i = 1; i < data.Length / 2; i++)
+            for (int i = 1; i < data.Length/ 2; i++)
             {
                 chart2.Series["Wave"].Points.AddXY(i, data[i]);
             }
@@ -164,7 +171,7 @@ namespace WaveProject
         private void drawChart(byte[] data)
         {
             chart2.Series["Wave"].Points.Clear();
-            for (int i = 1; i < data.Length / 2; i+=10)
+            for (int i = 1; i < data.Length/2; i+=100)
             {
                 chart2.Series["Wave"].Points.AddXY(i, data[i]);
             }
@@ -222,6 +229,7 @@ namespace WaveProject
         {
             MemoryStream stream = new MemoryStream(data);
             SoundPlayer player = new SoundPlayer(stream);
+
             player.Play();
 
 
@@ -232,6 +240,18 @@ namespace WaveProject
                 byte[] data = wav.toArray();
                 playData(data);
 
+        }
+
+        private void lowPassToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            double[] filt = dft.createFilter((int)chart1.ChartAreas[0].CursorX.SelectionStart, wav.mag);
+            //for (int i = 0, k = 0; i < temp.Length - 2; i++, k++)
+            //{
+            //    dTemp[k] = handle.byteToDouble(temp[i], temp[++i]);
+            //}
+            double[] fSample = filter.apply_filter(wav.real, filt);
+            //temp = handle.doubleToBytes(fSample);
+            drawChart(fSample);
         }
     }
 }
