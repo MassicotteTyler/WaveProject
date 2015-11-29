@@ -88,10 +88,6 @@ namespace WaveProject
                 ofd.Dispose();
                 return;
             }
-            playButton.Enabled = false;
-            recordButton.Enabled = false;
-            zoomButton.Enabled = false;
-            selectButton.Enabled = false;
 
             if (wav == null)
             {
@@ -99,6 +95,11 @@ namespace WaveProject
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            playButton.Enabled = false;
+            recordButton.Enabled = false;
+            zoomButton.Enabled = false;
+            selectButton.Enabled = false;
+
             double[] temp = handle.bufferByteToDouble(wav.getData());
             Complex[] samp = dft.Dft(real);
             drawChart(real);
@@ -238,8 +239,8 @@ namespace WaveProject
         {
             MemoryStream stream = new MemoryStream(data);
             SoundPlayer player = new SoundPlayer(stream);
-
             player.Play();
+
 
 
         }

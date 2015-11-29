@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea13 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend13 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series13 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea14 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend14 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series14 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuOpenFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,7 +69,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(977, 24);
+            this.menuStrip.Size = new System.Drawing.Size(744, 24);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip";
             this.menuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip_ItemClicked);
@@ -87,14 +87,14 @@
             // menuOpenFile
             // 
             this.menuOpenFile.Name = "menuOpenFile";
-            this.menuOpenFile.Size = new System.Drawing.Size(112, 22);
+            this.menuOpenFile.Size = new System.Drawing.Size(152, 22);
             this.menuOpenFile.Text = "Open..";
             this.menuOpenFile.Click += new System.EventHandler(this.menuOpenFile_Click);
             // 
             // saveAs
             // 
             this.saveAs.Name = "saveAs";
-            this.saveAs.Size = new System.Drawing.Size(112, 22);
+            this.saveAs.Size = new System.Drawing.Size(152, 22);
             this.saveAs.Text = "Save as";
             this.saveAs.Click += new System.EventHandler(this.saveAs_Click);
             // 
@@ -152,16 +152,16 @@
             // 
             // chart1
             // 
-            chartArea13.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea13);
-            legend13.Name = "Legend1";
-            this.chart1.Legends.Add(legend13);
-            this.chart1.Location = new System.Drawing.Point(53, 48);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
+            this.chart1.Location = new System.Drawing.Point(0, 54);
             this.chart1.Name = "chart1";
-            series13.ChartArea = "ChartArea1";
-            series13.Legend = "Legend1";
-            series13.Name = "Magnitude";
-            this.chart1.Series.Add(series13);
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Magnitude";
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(744, 203);
             this.chart1.TabIndex = 1;
             this.chart1.Text = "chart1";
@@ -169,22 +169,22 @@
             // 
             // chart2
             // 
-            chartArea14.AxisX.LineColor = System.Drawing.Color.DarkRed;
-            chartArea14.AxisY.TitleForeColor = System.Drawing.Color.Transparent;
-            chartArea14.BorderColor = System.Drawing.Color.Maroon;
-            chartArea14.BorderWidth = 0;
-            chartArea14.Name = "ChartArea1";
-            this.chart2.ChartAreas.Add(chartArea14);
-            legend14.Name = "Legend1";
-            this.chart2.Legends.Add(legend14);
-            this.chart2.Location = new System.Drawing.Point(53, 263);
+            chartArea2.AxisX.LineColor = System.Drawing.Color.DarkRed;
+            chartArea2.AxisY.TitleForeColor = System.Drawing.Color.Transparent;
+            chartArea2.BorderColor = System.Drawing.Color.Maroon;
+            chartArea2.BorderWidth = 0;
+            chartArea2.Name = "ChartArea1";
+            this.chart2.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chart2.Legends.Add(legend2);
+            this.chart2.Location = new System.Drawing.Point(0, 261);
             this.chart2.Name = "chart2";
-            series14.ChartArea = "ChartArea1";
-            series14.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series14.Legend = "Legend1";
-            series14.Name = "Wave";
-            series14.YValuesPerPoint = 4;
-            this.chart2.Series.Add(series14);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series2.Legend = "Legend1";
+            series2.Name = "Wave";
+            series2.YValuesPerPoint = 4;
+            this.chart2.Series.Add(series2);
             this.chart2.Size = new System.Drawing.Size(744, 228);
             this.chart2.TabIndex = 3;
             this.chart2.Text = "chart2";
@@ -201,7 +201,7 @@
             // 
             // zoomButton
             // 
-            this.zoomButton.Location = new System.Drawing.Point(820, 57);
+            this.zoomButton.Location = new System.Drawing.Point(243, 27);
             this.zoomButton.Name = "zoomButton";
             this.zoomButton.Size = new System.Drawing.Size(75, 23);
             this.zoomButton.TabIndex = 4;
@@ -211,7 +211,7 @@
             // 
             // selectButton
             // 
-            this.selectButton.Location = new System.Drawing.Point(820, 86);
+            this.selectButton.Location = new System.Drawing.Point(324, 27);
             this.selectButton.Name = "selectButton";
             this.selectButton.Size = new System.Drawing.Size(75, 23);
             this.selectButton.TabIndex = 5;
@@ -221,7 +221,7 @@
             // 
             // recordButton
             // 
-            this.recordButton.Location = new System.Drawing.Point(820, 116);
+            this.recordButton.Location = new System.Drawing.Point(0, 27);
             this.recordButton.Name = "recordButton";
             this.recordButton.Size = new System.Drawing.Size(75, 23);
             this.recordButton.TabIndex = 6;
@@ -231,7 +231,7 @@
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(820, 146);
+            this.stopButton.Location = new System.Drawing.Point(81, 27);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(75, 23);
             this.stopButton.TabIndex = 7;
@@ -241,7 +241,7 @@
             // 
             // playButton
             // 
-            this.playButton.Location = new System.Drawing.Point(820, 175);
+            this.playButton.Location = new System.Drawing.Point(162, 27);
             this.playButton.Name = "playButton";
             this.playButton.Size = new System.Drawing.Size(75, 23);
             this.playButton.TabIndex = 8;
@@ -253,7 +253,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(977, 575);
+            this.ClientSize = new System.Drawing.Size(744, 501);
             this.Controls.Add(this.playButton);
             this.Controls.Add(this.stopButton);
             this.Controls.Add(this.recordButton);
