@@ -197,7 +197,7 @@ namespace WaveProject
 
             byte[] result = new byte[values.Length * sizeof(double)];
             Buffer.BlockCopy(values, 0, result, 0, result.Length);
-            return result
+            return result;
         }
 
         
