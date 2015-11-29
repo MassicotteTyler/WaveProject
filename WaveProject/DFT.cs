@@ -15,23 +15,24 @@ namespace WaveProject
         {
             int N = samples.Length;
             Thread t1, t2;
-            
+            //Setup threadpool que
             Complex[] output = new Complex[N];
             Complex[] temp1 = new Complex[N / 2];
             Complex[] temp2 = new Complex[N / 2];
 
             var subDft1 = new Action<double[]>(samp => 
-            {             for (int k = 0; k < N / 2 + 1; k++)
             {
-                double sumreal = 0;
-                double sumimag = 0;
-                for (int t = 0; t < N / 2 + 1; t++)
+                for (int k = 0; k < N / 2 + 1; k++)
                 {
-                    sumreal += samples[t] * Math.Cos(t * k * -6.2832 / samples.Length);
-                    sumimag -= -samples[t] * Math.Sin(t * k * -6.2832 / samples.Length);
-        }
-                output[k] = new Complex(sumreal, sumimag);
-            }
+                    double sumreal = 0;
+                    double sumimag = 0;
+                    for (int t = 0; t < N / 2 + 1; t++)
+                    {
+                        sumreal += samples[t] * Math.Cos(t * k * -6.2832 / samples.Length);
+                        sumimag -= -samples[t] * Math.Sin(t * k * -6.2832 / samples.Length);
+                    }
+                    output[k] = new Complex(sumreal, sumimag);
+                }
             });
             
             var subDft2 = new Action<double[]>(samp =>
@@ -72,20 +73,48 @@ namespace WaveProject
 
             double arg = 2.0 * Math.PI / (double)N;
 
-            for (int k = 0; k < N; k++)
+            var subDft1 = new Action(() =>
             {
-                double sumreal = 0;
-                double sumimag = 0;
-                for (int t = 0; t < N; t++)
+                for (int k = 0; k < N / 2 + 1; k++)
                 {
-                    double angle = 2 * Math.PI * t * k / (double) N;
-                    sumreal += input[t].real * Math.Cos(angle);
-                    sumimag += -input[t].ima * Math.Sin(angle);
+                    double sumreal = 0;
+                    double sumimag = 0;
+                    for (int t = 0; t < N / 2 + 1; t++)
+                    {
+                        sumreal += input[t].real * Math.Cos(t * k * -6.2832 / N);
+                        sumimag += input[t].ima * Math.Sin(t * k * -6.2832 / N);
+                    }
+                    output[k] = (sumreal - sumimag) / N;
                 }
+            });
 
-                output[k] = (sumreal - sumimag) / N;
-             }
-                 return output;
+            var subDft2 = new Action(() =>
+            {
+                for (int k = N / 2 + 1; k < N; k++)
+                {
+                    double sumreal = 0;
+                    double sumimag = 0;
+                    for (int t = N / 2 + 1; t < N; t++)
+                    {
+                        sumreal += input[t].real * Math.Cos(t * k * -6.2832 / N);
+                        sumimag += input[t].ima * Math.Sin(t * k * -6.2832 / N);
+                    }
+                    output[k] = (sumreal - sumimag) / N;
+                }
+            });
+
+            Thread t1 = new Thread(() => subDft1(), 1024 * 1024);
+            Thread t2 = new Thread(() => subDft2(), 1024 * 1024);
+
+            t1.Start();
+            t2.Start();
+
+
+
+            t1.Join();
+            t2.Join();
+
+            return output;
         }
         //Calculates the length of the complex vector using pythag
         public double calc_length(Complex num)

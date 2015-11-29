@@ -88,6 +88,11 @@ namespace WaveProject
                 ofd.Dispose();
                 return;
             }
+            playButton.Enabled = false;
+            recordButton.Enabled = false;
+            zoomButton.Enabled = false;
+            selectButton.Enabled = false;
+
             if (wav == null)
             {
                 MessageBox.Show("Only 16bit PCM wav files", "Wav format error",
@@ -96,7 +101,6 @@ namespace WaveProject
             }
             double[] temp = handle.bufferByteToDouble(wav.getData());
             Complex[] samp = dft.Dft(real);
-            //drawChart(real);
             drawChart(real);
             mag = Complex.Mag(samp);
             wav.real = real;
@@ -107,6 +111,11 @@ namespace WaveProject
             {
                 chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
             }
+            playButton.Enabled = true;
+            recordButton.Enabled = true;
+            zoomButton.Enabled = true;
+            selectButton.Enabled = true;
+
         }
 
         private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
