@@ -239,6 +239,7 @@ namespace WaveProject
         {
             MemoryStream stream = new MemoryStream(data);
             SoundPlayer player = new SoundPlayer(stream);
+            //SoundPlayer player = new SoundPlayer("C:\\Users\\a00855150\\Desktop\\Wave_files\\sample15.wav");
             player.Play();
 
 
