@@ -21,9 +21,9 @@ namespace WaveProject
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            GUI gui = new GUI();
+            MainWindow mainWin = new MainWindow();
 
-            Application.Run(gui);
+            Application.Run(mainWin);
         }
     }
 }

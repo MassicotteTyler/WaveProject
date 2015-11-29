@@ -262,5 +262,10 @@ namespace WaveProject
             //temp = handle.doubleToBytes(fSample);
             drawChart(fSample);
         }
+
+        private void GUI_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
