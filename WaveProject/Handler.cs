@@ -195,10 +195,9 @@ namespace WaveProject
         public byte[] doubleToBytes(double[] values)
         {
 
-            //byte[] result = new byte[values.Length * sizeof(double)];
-            //Buffer.BlockCopy(values, 0, result, 0, result.Length);
-            //return result;
-            return values.SelectMany(value => BitConverter.GetBytes(value)).ToArray();
+            byte[] result = new byte[values.Length * sizeof(double)];
+            Buffer.BlockCopy(values, 0, result, 0, result.Length);
+            return result
         }
 
         

@@ -164,10 +164,7 @@ namespace WaveProject
             int index = (int)chart2.ChartAreas[0].CursorX.SelectionStart;
 
             wav.paste(handle.copyData, index);
-            wav = new Wav(handle.doubleToBytes(wav.real));
-            //drawChart(wav.real);
-            drawChart(wav.getData());
-
+            drawChart(wav.real);
         }
 
         private void drawChart(double[] data)
