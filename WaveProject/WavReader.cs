@@ -58,8 +58,8 @@ namespace WaveProject
             //    rData.Add((short)reader.ReadUInt16());
             //}
 
-            waveFile.setData(reader.ReadBytes((int)waveFile.head.dataSize/ waveFile.head.fmtBlockAlign));
-
+            //waveFile.setData(reader.ReadBytes((int)waveFile.head.dataSize/ waveFile.head.fmtBlockAlign));
+            waveFile.setData(reader.ReadBytes((int)waveFile.head.dataSize));
             //After this you have to split that byte array for each channel (Left, Right)
             //only worrying about dual channel for now
             if (waveFile.head.channels == 1)

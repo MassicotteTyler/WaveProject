@@ -79,6 +79,7 @@ namespace WaveProject
 
         public void setData (byte[] newData)
         {
+
             data = newData;
         }
 

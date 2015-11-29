@@ -13,8 +13,6 @@ namespace WaveProject
 
     public class Handler
     {
-        private WavReader reader;
-        private WavWriter writer;
         private DFT dft;
         public double[] copyData;
         public byte[] recordData;
@@ -52,6 +50,7 @@ namespace WaveProject
         public static extern int waveInPrepareHeader(IntPtr hWaveIn, ref WAVEHDR lpWaveHdr, uint Size);
         [DllImport("winmm.dll")]
         public static extern int waveInStart(IntPtr hWaveIn);
+
         [DllImport("winmm.dll", EntryPoint = "waveInOpen", SetLastError = true)]
         public static extern int waveInOpen(ref IntPtr t, uint id, ref WAVEFORMAT pwfx, IntPtr dwCallback, int dwInstance, int fdwOpen);
         [DllImport("winmm.dll", EntryPoint = "waveInUnprepareHeader", SetLastError = true)]
@@ -63,7 +62,7 @@ namespace WaveProject
         [DllImport("winmm.dll", EntryPoint = "waveInReset", SetLastError = true)]
         static extern uint waveInReset(IntPtr hwi);
 
-        private WaveProject.Handler.RecordingDelegate waveIn;
+        private Handler.RecordingDelegate waveIn;
         private IntPtr handle;
         private uint bufferLength;
         private WAVEHDR header;
@@ -90,14 +89,14 @@ namespace WaveProject
             headerPin = GCHandle.Alloc(header, GCHandleType.Pinned);
 
 
-            int i = WaveProject.Handler.waveInPrepareHeader(this.handle, ref header, Convert.ToUInt32(Marshal.SizeOf(header)));
+            int i = Handler.waveInPrepareHeader(this.handle, ref header, Convert.ToUInt32(Marshal.SizeOf(header)));
             if (i != 0)
             {
                 //Error in waveIn
                 return;
             }
 
-            i = WaveProject.Handler.waveInAddBuffer(handle, ref header, Convert.ToUInt32(Marshal.SizeOf(header)));
+            i = Handler.waveInAddBuffer(handle, ref header, Convert.ToUInt32(Marshal.SizeOf(header)));
             if (i != 0)
             {
                 //Error om waveInAdd
@@ -111,7 +110,7 @@ namespace WaveProject
         {
             handle = new IntPtr();
             waveIn = this.callbackWaveIn;
-            WaveProject.Handler.WAVEFORMAT format;
+            Handler.WAVEFORMAT format;
             format.wFormatTag = 1; //WAVE_FORMAT_PCM
             format.nChannels = 1;
             format.nSamplesPerSec = 11025;
@@ -124,7 +123,7 @@ namespace WaveProject
             format.cbSize = 0;
             //WAVE_MAPPER
 
-            int i = WaveProject.Handler.waveInOpen(ref handle, 4294967295, ref format, Marshal.GetFunctionPointerForDelegate(waveIn), 0, 0x0030000);
+            int i = Handler.waveInOpen(ref handle, 4294967295, ref format, Marshal.GetFunctionPointerForDelegate(waveIn), 0, 0x0030000);
             if (i != 0)
             {
                 //Error
@@ -132,7 +131,7 @@ namespace WaveProject
             }
 
             setupBuffer();
-            i = WaveProject.Handler.waveInStart(handle);
+            i = Handler.waveInStart(handle);
             if (i != 0)
             {
                 //stuff
