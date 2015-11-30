@@ -148,6 +148,16 @@ namespace WaveProject
             real = dataToDouble();
         }
 
+        public void paste(int index)
+        {
+            BinaryReader read = new BinaryReader(Clipboard.GetAudioStream());
+            byte[] byteTemp = read.ReadBytes((int)Clipboard.GetAudioStream().Length);
+            List<byte> bTemp = data.ToList();
+            bTemp.InsertRange(index * 2, byteTemp);
+            updateData(bTemp.ToArray());
+            real = dataToDouble();
+        }
+
         public double[] cut(int start, int end)
         {
 

@@ -160,10 +160,17 @@ namespace WaveProject
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (handle.copyData == null)
-                return;
+
 
             int index = (int)chart2.ChartAreas[0].CursorX.SelectionStart;
+
+            if (handle.copyData == null)
+            {
+                //Handle if Clipboard is )
+                wav.paste(index);
+                drawChart(wav.real);
+                return;
+            }
 
             wav.paste(handle.copyData, index);
             drawChart(wav.real);
