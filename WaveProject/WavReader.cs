@@ -64,7 +64,7 @@ namespace WaveProject
             //only worrying about dual channel for now
             if (waveFile.head.channels == 1)
             {
-                left = new double[waveFile.getData().Length];
+                left = new double[waveFile.getData().Length/2-1];
             }
             else if (waveFile.head.channels == 2)
             {

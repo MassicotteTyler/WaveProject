@@ -102,6 +102,8 @@ namespace WaveProject
 
             double[] temp = handle.bufferByteToDouble(wav.getData());
             Complex[] samp = dft.Dft(real);
+            byte[] control = wav.getData();
+            byte[] test = handle.doubleToBytes(real);
             drawChart(real);
             mag = Complex.Mag(samp);
             wav.real = real;
@@ -245,9 +247,9 @@ namespace WaveProject
         }
 
         private void playButton_Click(object sender, EventArgs e)
-        { 
-                byte[] data = wav.toArray();
-                playData(data);
+        {
+            byte[] data = wav.toArray();
+            playData(data);
 
         }
 

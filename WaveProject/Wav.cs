@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace WaveProject
@@ -86,18 +88,28 @@ namespace WaveProject
         public double[] copy(int start, int end)
         {
             double[] temp = new double[(end - start)];
+            byte[] byteTemp = new byte[(2* end) - (2* start)];
+
             for (int i = 0; i < end - start; i++)
             {
                 temp[i] = real[start + i];
 
             }
 
+            for (int i = 0; i < (2 * end) - (2 * start); i++)
+            {
+                byteTemp[i] = data[(2 * start) + i];
+            }
+            Clipboard.SetAudio(byteTemp);
             return temp;
         }
 
         public void paste(double[] pasteData, int index)
         {
             double[] temp = new double[real.Length + pasteData.Length];
+            byte[] byteTemp = new byte[data.Length + pasteData.Length * 2];
+            List<byte> bTemp = data.ToList();
+
             int i;
             for (i = 0; i < index; i++ )
             {
@@ -106,10 +118,14 @@ namespace WaveProject
 
             pasteData.CopyTo(temp, index);
 
-            for (int j = index + pasteData.Length; j < real.Length; j++)
-            {
-                temp[j] = real[i++];
-            }
+
+
+            BinaryReader read = new BinaryReader(Clipboard.GetAudioStream());
+            byteTemp = read.ReadBytes(byteTemp.Length);
+            bTemp.InsertRange(index * 2, byteTemp);
+
+
+            updateData(bTemp.ToArray());
             real = temp;
         }
 
@@ -133,6 +149,14 @@ namespace WaveProject
             
         }
 
+        private void updateData(byte[] newData)
+        {
+
+            head.fileSize = 36 + (uint)newData.Length;
+            head.dataSize = (uint)newData.Length;
+
+            data = newData;
+        }
         public byte[] toArray()
         {
             List<byte> arr = new List<byte>();
