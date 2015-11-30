@@ -172,7 +172,7 @@ namespace WaveProject
         private void drawChart(double[] data)
         {
             chart2.Series["Wave"].Points.Clear();
-            for (int i = 1; i < data.Length/ 2; i++)
+            for (int i = 1; i < data.Length; i++)
             {
                 chart2.Series["Wave"].Points.AddXY(i, data[i]);
             }
@@ -181,7 +181,7 @@ namespace WaveProject
         private void drawChart(byte[] data)
         {
             chart2.Series["Wave"].Points.Clear();
-            for (int i = 1; i < data.Length/2; i+=100)
+            for (int i = 1; i < data.Length; i+=100)
             {
                 chart2.Series["Wave"].Points.AddXY(i, data[i]);
             }
@@ -268,6 +268,19 @@ namespace WaveProject
         private void GUI_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void hanningToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Complex[] result = dft.Dft(filter.hanning_window(wav.real));
+            double[] mag = Complex.Mag(result);
+
+            chart1.Series["Magnitude"].Points.Clear();
+            for (int j = 1; j < mag.Length / 2; j++)
+            {
+                chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
+            }
+            
         }
     }
 }

@@ -151,6 +151,7 @@ namespace WaveProject
             return Xre;
         }
 
+        //remove 
         public double[] createFilter(int selection, double[] samples)
         {
             double[] filter;

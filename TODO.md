@@ -7,3 +7,4 @@
 5. Fix double to byte conversion
 6. Copy/Cut go to clipboard
 7. pasting between windows
+8. Stereo wav reading (dual channel)

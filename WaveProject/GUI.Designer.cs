@@ -54,6 +54,9 @@
             this.recordButton = new System.Windows.Forms.Button();
             this.stopButton = new System.Windows.Forms.Button();
             this.playButton = new System.Windows.Forms.Button();
+            this.windowingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rectangleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hanningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
@@ -66,6 +69,7 @@
             this.fileToolStripMenuItem,
             this.viewToolStripMenuItem,
             this.filterToolStripMenuItem,
+            this.windowingToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -87,14 +91,14 @@
             // menuOpenFile
             // 
             this.menuOpenFile.Name = "menuOpenFile";
-            this.menuOpenFile.Size = new System.Drawing.Size(152, 22);
+            this.menuOpenFile.Size = new System.Drawing.Size(112, 22);
             this.menuOpenFile.Text = "Open..";
             this.menuOpenFile.Click += new System.EventHandler(this.menuOpenFile_Click);
             // 
             // saveAs
             // 
             this.saveAs.Name = "saveAs";
-            this.saveAs.Size = new System.Drawing.Size(152, 22);
+            this.saveAs.Size = new System.Drawing.Size(112, 22);
             this.saveAs.Text = "Save as";
             this.saveAs.Click += new System.EventHandler(this.saveAs_Click);
             // 
@@ -249,6 +253,28 @@
             this.playButton.UseVisualStyleBackColor = true;
             this.playButton.Click += new System.EventHandler(this.playButton_Click);
             // 
+            // windowingToolStripMenuItem
+            // 
+            this.windowingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.rectangleToolStripMenuItem,
+            this.hanningToolStripMenuItem});
+            this.windowingToolStripMenuItem.Name = "windowingToolStripMenuItem";
+            this.windowingToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
+            this.windowingToolStripMenuItem.Text = "Windowing";
+            // 
+            // rectangleToolStripMenuItem
+            // 
+            this.rectangleToolStripMenuItem.Name = "rectangleToolStripMenuItem";
+            this.rectangleToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.rectangleToolStripMenuItem.Text = "Rectangle";
+            // 
+            // hanningToolStripMenuItem
+            // 
+            this.hanningToolStripMenuItem.Name = "hanningToolStripMenuItem";
+            this.hanningToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hanningToolStripMenuItem.Text = "Hanning";
+            this.hanningToolStripMenuItem.Click += new System.EventHandler(this.hanningToolStripMenuItem_Click);
+            // 
             // GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -297,6 +323,9 @@
         private System.Windows.Forms.Button playButton;
         private System.Windows.Forms.ToolStripMenuItem filterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lowPassToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem windowingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem rectangleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hanningToolStripMenuItem;
     }
 }
 

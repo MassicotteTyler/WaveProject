@@ -31,5 +31,16 @@ namespace WaveProject
             }
             return result;
         }
+
+        public double[] hanning_window(double[] samples)
+        {
+            double[] output = new double[samples.Length];
+            for (int i = 0; i < samples.Length; i++)
+            {
+                output[i] = 0.5 * (1 - (Math.Cos((2 * Math.PI * samples[i]) / (samples.Length - 1))));
+            }
+
+            return output;
+        }
     }
 }
