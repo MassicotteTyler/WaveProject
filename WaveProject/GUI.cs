@@ -46,7 +46,7 @@ namespace WaveProject
 
             chart1.ChartAreas[0].CursorX.IsUserEnabled = true;
             chart1.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
-            chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = false;
+            chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
             stopButton.Enabled = false;
         }
 
@@ -183,7 +183,7 @@ namespace WaveProject
             chart2.Series["Wave"].Points.Clear();
             for (int i = 1; i < data.Length; i+=100)
             {
-                chart2.Series["Wave"].Points.AddXY(i, data[i]);
+                chart2.Series["Wave"].Points.AddXY(i, data[i] - 128);
             }
         }
 
@@ -206,13 +206,14 @@ namespace WaveProject
         {
             recordButton.Enabled = false;
             stopButton.Enabled = true;
-            t1 = new Thread(new ThreadStart(call_record));
-            t1.Start();
+            //t1 = new Thread(new ThreadStart(call_record));
+            //t1.Start();
+            handle.Record();
         }
 
         private void stopButton_Click(object sender, EventArgs e)
         {
-            handle.stop();
+            handle.recordData = handle.data_stop();
             recordButton.Enabled = true;
             stopButton.Enabled = false;
             if (handle.recordData != null)
@@ -239,8 +240,9 @@ namespace WaveProject
         {
             MemoryStream stream = new MemoryStream(data);
             SoundPlayer player = new SoundPlayer(stream);
-            //SoundPlayer player = new SoundPlayer("C:\\Users\\a00855150\\Desktop\\Wave_files\\sample15.wav");
             player.Play();
+
+            //handle.play();
 
 
 
@@ -280,6 +282,9 @@ namespace WaveProject
             {
                 chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
             }
+
+            chart1.ChartAreas[0].AxisY.Maximum = 600;
+            chart1.ChartAreas[0].AxisX.Minimum = 1;
             
         }
     }

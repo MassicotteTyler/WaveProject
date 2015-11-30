@@ -10,6 +10,9 @@ namespace WaveProject
 {
     class Wav
     {
+
+        private Handler handle;
+
         public class Header
         {
             public byte[] chunkID;
@@ -46,6 +49,7 @@ namespace WaveProject
             real = null;
             ima = null;
             mag = null;
+            handle = new Handler();
 
         }
 
@@ -68,10 +72,25 @@ namespace WaveProject
             head.dataID = System.Text.Encoding.ASCII.GetBytes("data");
             head.dataSize = (uint)newData.Length;
 
+
+
             data = newData;
 
-            
+            real = dataToDouble();
 
+
+        }
+
+        private double[] dataToDouble()
+        {
+            handle = new Handler();
+            double[] result = new double[data.Length / 2];
+            for (int i = 0, pos = 0; pos < data.Length - 2; i++, pos++)
+            {
+                result[i] = handle.byteToDouble(data[pos], data[++pos]);
+            }
+
+            return result;
         }
 
         public byte[] getData()
@@ -126,7 +145,7 @@ namespace WaveProject
 
 
             updateData(bTemp.ToArray());
-            real = temp;
+            real = dataToDouble();
         }
 
         public double[] cut(int start, int end)
@@ -149,7 +168,7 @@ namespace WaveProject
             
         }
 
-        private void updateData(byte[] newData)
+        public void updateData(byte[] newData)
         {
 
             head.fileSize = 36 + (uint)newData.Length;

@@ -37,7 +37,18 @@ namespace WaveProject
             double[] output = new double[samples.Length];
             for (int i = 0; i < samples.Length; i++)
             {
-                output[i] = 0.5 * (1 - (Math.Cos((2 * Math.PI * samples[i]) / (samples.Length - 1))));
+                output[i] = 0.54 + (0.46 * Math.Cos(Math.PI * samples[i]));
+            }
+
+            return output;
+        }
+
+        public double[] triangle_window(double[] samples)
+        {
+            double[] output = new double[samples.Length];
+            for (int i = 0; i < samples.Length; i++)
+            {
+                
             }
 
             return output;

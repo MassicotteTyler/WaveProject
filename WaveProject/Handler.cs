@@ -62,13 +62,34 @@ namespace WaveProject
         [DllImport("winmm.dll", EntryPoint = "waveInReset", SetLastError = true)]
         static extern uint waveInReset(IntPtr hwi);
 
+        [DllImport("winmm.dll", EntryPoint = "waveOutOpen", SetLastError = true)]
+        public static extern int waveOutOpen(ref IntPtr t, uint id, ref WAVEFORMAT pwfx, IntPtr dwCallback, int dwInstance, int fdwOpen);
+        [DllImport("winmm.dll", EntryPoint = "waveOutPrepareHeader", SetLastError = true)]
+        public static extern int waveOutPrepareHeader(IntPtr hWaveIn, ref WAVEHDR lpWaveHdr, uint Size);
+        [DllImport("winmm.dll", EntryPoint = "waveOutWrite", SetLastError = true)]
+        public static extern int waveOutWrite(IntPtr hWaveIn, ref WAVEHDR lpWaveHdr, uint Size);
+        [DllImport("winmm.dll", EntryPoint = "waveOutUnprepareHeader", SetLastError = true)]
+        public static extern int waveOutUnprepareHeader(IntPtr hwi, ref WAVEHDR pwh, uint cbwh);
+        [DllImport("winmm.dll", EntryPoint = "waveOutClose", SetLastError = true)]
+        public static extern uint waveOutClose(IntPtr hwnd);
+        [DllImport("winmm.dll", EntryPoint = "waveOutStart", SetLastError = true)]
+        public static extern int waveOutStart(IntPtr hWaveIn);
+        [DllImport("winmm.dll", EntryPoint = "waveOutStop", SetLastError = true)]
+        static extern uint waveOutStop(IntPtr hwi);
+        [DllImport("winmm.dll", EntryPoint = "waveOutReset", SetLastError = true)]
+        static extern uint waveOutReset(IntPtr hwi);
+
         private Handler.RecordingDelegate waveIn;
         private IntPtr handle;
+        private IntPtr hWaveOut;
         private uint bufferLength;
         private WAVEHDR header;
+        private WAVEHDR Outheader;
         private GCHandle headerPin;
         private GCHandle bufferPin;
+        private GCHandle savePin;
         private byte[] buffer;
+        private byte[] save;
 
         public byte[] Record()
         {
@@ -139,19 +160,95 @@ namespace WaveProject
 
         }
 
+        public void play()
+        {
+            savePin = GCHandle.Alloc(save, GCHandleType.Pinned);
+            hWaveOut = new IntPtr();
+            waveIn = this.callbackWaveOut;
+            Handler.WAVEFORMAT format;
+            format.wFormatTag = 1; //WAVE_FORMAT_PCM
+            format.nChannels = 1;
+            format.nSamplesPerSec = 11025;
+            format.wBitPerSample = 8;
+            format.nBlockAlign = Convert.ToUInt16(format.nChannels * (format.wBitPerSample >> 3));
+            format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
+            savePin = GCHandle.Alloc(save, GCHandleType.Pinned);
+            format.cbSize = 0;
+            //WAVE_MAPPER
+
+            int i = Handler.waveOutOpen(ref hWaveOut, 4294967295, ref format, Marshal.GetFunctionPointerForDelegate(waveIn), 0, 0x0030000);
+            if (i != 0)
+            {
+                //Error
+                return;
+            }
+
+            setupOutbuffer();
+
+        }
+
+        private void setupOutbuffer()
+        {
+            Outheader.lpData = savePin.AddrOfPinnedObject();
+            Outheader.dwBufferLength = (uint)save.Length;
+            Outheader.dwFlags = 0x00000004 | 0x00000008;
+            Outheader.dwBytesRecorded = 0;
+            Outheader.dwLoops = 1;
+            Outheader.lpNext = IntPtr.Zero;
+            Outheader.reserved = IntPtr.Zero;
+
+            int i = Handler.waveOutPrepareHeader(hWaveOut, ref Outheader, Convert.ToUInt32(Marshal.SizeOf(Outheader)));
+            if (i != 0)
+                return;
+
+            i = Handler.waveOutWrite(hWaveOut, ref Outheader, Convert.ToUInt32(Marshal.SizeOf(Outheader)));
+            if (i != 0)
+                return;
+
+
+
+        }
+
 
         private void callbackWaveIn(IntPtr deviceHandle, uint message, IntPtr instance, ref WAVEHDR wavehdr, IntPtr reserved2)
         {
 
             if (message == 0x3BF) //WIM_DATA
             {
-                //if (wavehdr.dwBytesRecorded > 0)
-                //{
-                //    foreach (byte buf in buffer)
-                //    {
-                //        //do stuff
-                //    }
-                //}
+                if (save != null)
+                {
+                    List<byte> temp = save.ToList();
+                    temp.AddRange(buffer.ToList());
+                    temp.RemoveAll(delegate (byte a) { return a == 0; });
+                    save = temp.ToArray();
+                }
+                else
+                    save = buffer;
+
+                savePin = GCHandle.Alloc(save, GCHandleType.Pinned);
+
+                int i = waveInUnprepareHeader(deviceHandle, ref header, Convert.ToUInt32(Marshal.SizeOf(header)));
+                if (i != 0) //MMSYSERR_NOERROR
+                {
+                    //Error
+                    return;
+                }
+                setupBuffer();
+            }
+        }
+
+        private void callbackWaveOut(IntPtr deviceHandle, uint message, IntPtr instance, ref WAVEHDR wavehdr, IntPtr reserved2)
+        {
+
+            if (message == 0x3BF) //WIM_DATA
+            {
+                List<byte> temp = save.ToList();
+                temp.AddRange(buffer.ToList());
+                temp.RemoveAll(delegate (byte a) { return a == 0; });
+
+                save = temp.ToArray();
+
+                savePin = GCHandle.Alloc(save, GCHandleType.Pinned);
 
                 int i = waveInUnprepareHeader(deviceHandle, ref header, Convert.ToUInt32(Marshal.SizeOf(header)));
                 if (i != 0) //MMSYSERR_NOERROR
@@ -166,9 +263,37 @@ namespace WaveProject
 
         public void stop()
         {
+            List<byte> temp = buffer.ToList();
+            temp.RemoveAll(delegate (byte a) { return a == 0; });
+
+            buffer = temp.ToArray();
+
+            bufferPin.Free();
+            bufferPin = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+
             waveInStop(handle);
             waveInReset(handle);
             waveInClose(handle);
+        }
+
+
+        public byte[] data_stop()
+        {
+
+            List<byte> temp = buffer.ToList();
+            temp.RemoveAll(delegate (byte a) { return a == 0; });
+
+            buffer = temp.ToArray();
+
+            bufferPin.Free();
+            bufferPin = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+
+
+            waveInStop(handle);
+            waveInReset(handle);
+            waveInClose(handle);
+
+            return buffer;
         }
 
 
