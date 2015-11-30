@@ -101,19 +101,15 @@ namespace WaveProject
             selectButton.Enabled = false;
 
             double[] temp = handle.bufferByteToDouble(wav.getData());
-            Complex[] samp = dft.Dft(real);
             byte[] control = wav.getData();
             byte[] test = handle.doubleToBytes(real);
             drawChart(real);
-            mag = Complex.Mag(samp);
+            
             wav.real = real;
             wav.ima = ima;
-            wav.mag = mag;
+            
 
-            for (int j = 1; j < mag.Length/2; j++)
-            {
-                chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
-            }
+
             playButton.Enabled = true;
             recordButton.Enabled = true;
             zoomButton.Enabled = true;
@@ -229,7 +225,8 @@ namespace WaveProject
                 Wav nWav = new Wav(handle.recordData);
                 wav = nWav;
                 wav.trimData();
-                drawChart(wav.getData());
+                //drawChart(wav.getData());
+                drawChart(wav.dataToDouble());
 
             }
             else
@@ -271,6 +268,7 @@ namespace WaveProject
             //}
             double[] fSample = filter.apply_filter(wav.real, filt);
             //temp = handle.doubleToBytes(fSample);
+
             drawChart(fSample);
         }
 
@@ -281,7 +279,9 @@ namespace WaveProject
 
         private void hanningToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Complex[] result = dft.Dft(filter.hanning_window(wav.real));
+            //Complex[] result = dft.Dft(filter.hanning_window(dft.iDft(wav.df)));
+            int max = (int)chart1.ChartAreas[0].AxisY.Maximum;
+            Complex[] result = dft.Dft(filter.hanning_window(wav.ima));
             double[] mag = Complex.Mag(result);
 
             chart1.Series["Magnitude"].Points.Clear();
@@ -290,9 +290,49 @@ namespace WaveProject
                 chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
             }
 
-            chart1.ChartAreas[0].AxisY.Maximum = 600;
-            chart1.ChartAreas[0].AxisX.Minimum = 1;
+            chart1.ChartAreas[0].AxisY.Maximum = max;
+            //chart1.ChartAreas[0].AxisX.Minimum = 1;
             
+        }
+
+        private void showTemporalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (wav.getData() == null)
+                return;
+            List<double> test = wav.real.ToList();
+            List<double> nData;
+            int start = (int)chart2.ChartAreas[0].CursorX.SelectionStart;
+            int end = (int)chart2.ChartAreas[0].CursorX.SelectionEnd;
+
+            if (start < end)
+                nData = test.GetRange(start, (end - start));
+            else
+                nData = test.GetRange(end, (start - end));
+
+            wav.df = dft.Dft(nData.ToArray());
+            wav.ima = nData.ToArray();
+            wav.mag = Complex.Mag(wav.df);
+
+            chart1.Series["Magnitude"].Points.Clear();
+            for (int j = 1; j < wav.mag.Length; j++)
+            {
+                chart1.Series["Magnitude"].Points.AddXY(j, wav.mag[j]);
+            }
+        }
+
+        private void rectangleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Complex[] result = dft.Dft(wav.ima);
+            double[] mag = Complex.Mag(result);
+
+            chart1.Series["Magnitude"].Points.Clear();
+            for (int j = 1; j < mag.Length / 2; j++)
+            {
+                chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
+            }
+
+            //chart1.ChartAreas[0].AxisY.Maximum = 600;
+            //chart1.ChartAreas[0].AxisX.Minimum = 1;
         }
     }
 }

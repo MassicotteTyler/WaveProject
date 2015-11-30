@@ -44,6 +44,11 @@
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lowPassToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rectangleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hanningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dFTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showTemporalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -54,9 +59,6 @@
             this.recordButton = new System.Windows.Forms.Button();
             this.stopButton = new System.Windows.Forms.Button();
             this.playButton = new System.Windows.Forms.Button();
-            this.windowingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.rectangleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hanningToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
@@ -70,6 +72,7 @@
             this.viewToolStripMenuItem,
             this.filterToolStripMenuItem,
             this.windowingToolStripMenuItem,
+            this.dFTToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -147,6 +150,44 @@
             this.lowPassToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.lowPassToolStripMenuItem.Text = "Low Pass";
             this.lowPassToolStripMenuItem.Click += new System.EventHandler(this.lowPassToolStripMenuItem_Click);
+            // 
+            // windowingToolStripMenuItem
+            // 
+            this.windowingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.rectangleToolStripMenuItem,
+            this.hanningToolStripMenuItem});
+            this.windowingToolStripMenuItem.Name = "windowingToolStripMenuItem";
+            this.windowingToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
+            this.windowingToolStripMenuItem.Text = "Windowing";
+            // 
+            // rectangleToolStripMenuItem
+            // 
+            this.rectangleToolStripMenuItem.Name = "rectangleToolStripMenuItem";
+            this.rectangleToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.rectangleToolStripMenuItem.Text = "Rectangle";
+            this.rectangleToolStripMenuItem.Click += new System.EventHandler(this.rectangleToolStripMenuItem_Click);
+            // 
+            // hanningToolStripMenuItem
+            // 
+            this.hanningToolStripMenuItem.Name = "hanningToolStripMenuItem";
+            this.hanningToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hanningToolStripMenuItem.Text = "Hanning";
+            this.hanningToolStripMenuItem.Click += new System.EventHandler(this.hanningToolStripMenuItem_Click);
+            // 
+            // dFTToolStripMenuItem
+            // 
+            this.dFTToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showTemporalToolStripMenuItem});
+            this.dFTToolStripMenuItem.Name = "dFTToolStripMenuItem";
+            this.dFTToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
+            this.dFTToolStripMenuItem.Text = "DFT";
+            // 
+            // showTemporalToolStripMenuItem
+            // 
+            this.showTemporalToolStripMenuItem.Name = "showTemporalToolStripMenuItem";
+            this.showTemporalToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.showTemporalToolStripMenuItem.Text = "Show temporal";
+            this.showTemporalToolStripMenuItem.Click += new System.EventHandler(this.showTemporalToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -253,28 +294,6 @@
             this.playButton.UseVisualStyleBackColor = true;
             this.playButton.Click += new System.EventHandler(this.playButton_Click);
             // 
-            // windowingToolStripMenuItem
-            // 
-            this.windowingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.rectangleToolStripMenuItem,
-            this.hanningToolStripMenuItem});
-            this.windowingToolStripMenuItem.Name = "windowingToolStripMenuItem";
-            this.windowingToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
-            this.windowingToolStripMenuItem.Text = "Windowing";
-            // 
-            // rectangleToolStripMenuItem
-            // 
-            this.rectangleToolStripMenuItem.Name = "rectangleToolStripMenuItem";
-            this.rectangleToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.rectangleToolStripMenuItem.Text = "Rectangle";
-            // 
-            // hanningToolStripMenuItem
-            // 
-            this.hanningToolStripMenuItem.Name = "hanningToolStripMenuItem";
-            this.hanningToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.hanningToolStripMenuItem.Text = "Hanning";
-            this.hanningToolStripMenuItem.Click += new System.EventHandler(this.hanningToolStripMenuItem_Click);
-            // 
             // GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -326,6 +345,8 @@
         private System.Windows.Forms.ToolStripMenuItem windowingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rectangleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hanningToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dFTToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showTemporalToolStripMenuItem;
     }
 }
 

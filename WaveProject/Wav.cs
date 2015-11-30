@@ -38,6 +38,7 @@ namespace WaveProject
             public double[] real;
             public double[] ima;
             public double[] mag;
+            public Complex[] df;
 
             byte[] data;
 
@@ -81,7 +82,7 @@ namespace WaveProject
 
         }
 
-        private double[] dataToDouble()
+        public double[] dataToDouble()
         {
             handle = new Handler();
             double[] result = new double[data.Length / 2];
