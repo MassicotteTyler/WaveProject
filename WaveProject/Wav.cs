@@ -8,13 +8,20 @@ using System.Threading.Tasks;
 
 namespace WaveProject
 {
+    /*
+    * The Wav class is a reimplementation of the format structure wav files use. A Wav object represents wav data
+    * either recordered or opened from a file. The class has methods to manipulate the sample data of the wav while 
+    * updating the header values accordingly.
+    */
     class Wav
     {
 
         private Handler handle;
 
+        /* Inner class Header represents the first 44 bytes of a wav file. All the format data is contained inside. */
         public class Header
         {
+            /*The header bytes of the wav file */
             public byte[] chunkID;
             public uint fileSize;
             public byte[] riffType;
@@ -40,6 +47,7 @@ namespace WaveProject
             public double[] mag;
             public Complex[] df;
 
+            //The wav samples
             byte[] data;
 
         public Header head;
@@ -67,8 +75,8 @@ namespace WaveProject
             head.channels = 1;
             head.sampleRate = 11025;
             head.fmtAvgBPS = 11025;
-            head.fmtBlockAlign = 1;
-            head.bitDepth = 8;
+            head.fmtBlockAlign = 2;
+            head.bitDepth = 16;
 
             head.dataID = System.Text.Encoding.ASCII.GetBytes("data");
             head.dataSize = (uint)newData.Length;
@@ -82,28 +90,37 @@ namespace WaveProject
 
         }
 
+        /*
+        * Converts the samples from bytes to doubles. This function is for use with 16bit samples.
+        * Because we are working with 16bit samples there are two bytes for sample. Therefore we
+        * convert two bytes into one double.
+        * Returns the double array of converted values.
+        */
         public double[] dataToDouble()
         {
             handle = new Handler();
             double[] result = new double[data.Length / 2];
             for (int i = 0, pos = 0; pos < data.Length - 2; i++, pos++)
             {
-                result[i] = handle.byteToDouble(data[pos], data[++pos]);
+                result[i] = handle.byteToDouble(data[pos], data[++pos]); //make method static
             }
 
             return result;
         }
 
+        //Returns the wav files samples in bytes.
         public byte[] getData()
         {
             return data;
         }
 
+        //replaced by updateData. Remove.
         public void setData (byte[] newData)
         {
 
             data = newData;
         }
+
 
         public double[] copy(int start, int end)
         {

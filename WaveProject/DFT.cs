@@ -29,7 +29,7 @@ namespace WaveProject
                     for (int t = 0; t < N / 2 + 1; t++)
                     {
                         sumreal += samples[t] * Math.Cos(t * k * -6.2832 / samples.Length);
-                        sumimag -= -samples[t] * Math.Sin(t * k * -6.2832 / samples.Length);
+                        sumimag -= samples[t] * Math.Sin(t * k * -6.2832 / samples.Length);
                     }
                     output[k] = new Complex(sumreal, sumimag);
                 }
@@ -44,7 +44,7 @@ namespace WaveProject
                     for (int t = N / 2 + 1; t < N; t++)
                     {
                         sumreal += samples[t] * Math.Cos(t * k * -6.2832 / samples.Length);
-                        sumimag -= -samples[t] * Math.Sin(t * k * -6.2832 / samples.Length);
+                        sumimag -= samples[t] * Math.Sin(t * k * -6.2832 / samples.Length);
                     }
                     output[k] = new Complex(sumreal, sumimag);
                 }

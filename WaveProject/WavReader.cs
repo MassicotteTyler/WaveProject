@@ -77,6 +77,8 @@ namespace WaveProject
                 left[i] = hand.byteToDouble(waveFile.getData()[pos], waveFile.getData()[++pos]);
             }
 
+            
+
             file = waveFile;
             //Wav supports many channels, so you have to read channel from header
             return waveFile.getData();

@@ -35,7 +35,7 @@ namespace WaveProject
             double[] temp = new double[values.Length];
             for (int i = 0; i < values.Length; i++)
             {
-                temp[i] = Math.Sqrt(Math.Pow(values[i].real, 2) + Math.Pow(values[i].ima, 2));
+                temp[i] = Math.Sqrt(Math.Pow(values[i].real, 2) + Math.Pow(values[i].ima, 2)) / values.Length;
             }
             return temp;
         }

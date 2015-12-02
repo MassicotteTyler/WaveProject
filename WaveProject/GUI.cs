@@ -175,10 +175,11 @@ namespace WaveProject
         private void drawChart(double[] data)
         {
             chart2.Series["Wave"].Points.Clear();
-            for (int i = 1; i < data.Length; i++)
+            for (int i = 1; i < data.Length; i+=5)
             {
                 chart2.Series["Wave"].Points.AddXY(i, data[i]);
             }
+            chart2.ChartAreas[0].AxisX.Minimum = 0;
         }
 
         private void drawChart(byte[] data)
@@ -224,7 +225,7 @@ namespace WaveProject
                 wav.setData(handle.recordData);
                 Wav nWav = new Wav(handle.recordData);
                 wav = nWav;
-                wav.trimData();
+                //wav.trimData();
                 //drawChart(wav.getData());
                 drawChart(wav.dataToDouble());
 
