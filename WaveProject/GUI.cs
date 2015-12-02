@@ -144,14 +144,14 @@ namespace WaveProject
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int start = (int)chart2.ChartAreas[0].CursorX.SelectionStart;
-            int end = (int)chart2.ChartAreas[0].CursorX.SelectionEnd;
+            int start;
+            int end;
+            getSelection(out start, out end);
+
             if ((start - end) == 0)
                 return;
-            if (start < end)
-                handle.copyData = wav.copy(start, end);
-            else
-                handle.copyData = wav.copy(end, start);
+           handle.copyData = wav.copy(start, end);
+                
         }
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -193,16 +193,16 @@ namespace WaveProject
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int start = (int)chart2.ChartAreas[0].CursorX.SelectionStart;
-            int end = (int)chart2.ChartAreas[0].CursorX.SelectionEnd;
+            int start;
+            int end;
+
+            getSelection(out start, out end);
 
             if ((start - end) == 0)
                 return;
 
-            if (start < end)
-                handle.copyData = wav.cut(start, end);
-            else
-                handle.copyData = wav.cut(end, start);
+            handle.copyData = wav.cut(start, end);
+
             drawChart(wav.real);
         }
 
@@ -243,11 +243,11 @@ namespace WaveProject
 
         private void playData(Byte[] data)
         {
-            MemoryStream stream = new MemoryStream(data);
-            SoundPlayer player = new SoundPlayer(stream);
-            player.Play();
+            //MemoryStream stream = new MemoryStream(data);
+            //SoundPlayer player = new SoundPlayer(stream);
+            //player.Play();
 
-            //handle.play();
+            handle.play(wav);
 
 
 
@@ -286,7 +286,7 @@ namespace WaveProject
             double[] mag = Complex.Mag(result);
 
             chart1.Series["Magnitude"].Points.Clear();
-            for (int j = 1; j < mag.Length / 2; j++)
+            for (int j = 1; j < mag.Length ; j++)
             {
                 chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
             }
@@ -302,8 +302,9 @@ namespace WaveProject
                 return;
             List<double> test = wav.real.ToList();
             List<double> nData;
-            int start = (int)chart2.ChartAreas[0].CursorX.SelectionStart;
-            int end = (int)chart2.ChartAreas[0].CursorX.SelectionEnd;
+            int start, end;
+            getSelection(out start, out end);
+            
 
             if (start < end)
                 nData = test.GetRange(start, (end - start));
@@ -321,13 +322,28 @@ namespace WaveProject
             }
         }
 
+        private void getSelection(out int start, out int end)
+        {
+            start = (int)chart2.ChartAreas[0].CursorX.SelectionStart - 1;
+            end = (int)chart2.ChartAreas[0].CursorX.SelectionEnd - 1;
+            if (start < 0) start = 0;
+            if (end < 0) end = 0;
+
+            if (start > end)
+            {
+                start = start + end;
+                end = start - end;
+                start = start - end;
+            }    
+        }
+
         private void rectangleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Complex[] result = dft.Dft(wav.ima);
             double[] mag = Complex.Mag(result);
 
             chart1.Series["Magnitude"].Points.Clear();
-            for (int j = 1; j < mag.Length / 2; j++)
+            for (int j = 1; j < mag.Length; j++)
             {
                 chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
             }

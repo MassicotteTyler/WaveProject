@@ -14,7 +14,7 @@ namespace WaveProject
         public Complex[] Dft(double[] samples)
         {
             int N = samples.Length;
-            Thread t1, t2;
+            Thread thread1, thread2;
             //Setup threadpool que
             Complex[] output = new Complex[N];
             Complex[] temp1 = new Complex[N / 2];
@@ -22,16 +22,16 @@ namespace WaveProject
 
             var subDft1 = new Action<double[]>(samp => 
             {
-                for (int k = 0; k < N / 2 + 1; k++)
+                for (int k1 = 0; k1 < N / 2 + 1; k1++)
                 {
                     double sumreal = 0;
                     double sumimag = 0;
-                    for (int t = 0; t < N / 2 + 1; t++)
+                    for (int t2 = 0; t2 < N; t2++)
                     {
-                        sumreal += samples[t] * Math.Cos(t * k * -6.2832 / samples.Length);
-                        sumimag -= samples[t] * Math.Sin(t * k * -6.2832 / samples.Length);
+                        sumreal += samples[t2] * Math.Cos(t2 * ((2 * Math.PI) * k1 / N));
+                        sumimag -= samples[t2] * Math.Sin(t2 * ((2 * Math.PI) * k1 / N));
                     }
-                    output[k] = new Complex(sumreal, sumimag);
+                    output[k1] = new Complex(sumreal, sumimag);
                 }
             });
             
@@ -41,24 +41,24 @@ namespace WaveProject
                 {
                     double sumreal = 0;
                     double sumimag = 0;
-                    for (int t = N / 2 + 1; t < N; t++)
+                    for (int t = 0; t < N; t++)
                     {
-                        sumreal += samples[t] * Math.Cos(t * k * -6.2832 / samples.Length);
-                        sumimag -= samples[t] * Math.Sin(t * k * -6.2832 / samples.Length);
+                        sumreal += samples[t] * Math.Cos(t * ((2 * Math.PI) * k / N));
+                        sumimag -= samples[t] * Math.Sin(t * ((2 * Math.PI) * k / N));
                     }
                     output[k] = new Complex(sumreal, sumimag);
                 }
             });
 
 
-            t1 = new Thread(() => subDft1(samples), 1024 * 1024);
-            t2 = new Thread(() => subDft2(samples), 1024 * 1024);
+            thread1 = new Thread(() => subDft1(samples), 1024 * 1024);
+            thread2 = new Thread(() => subDft2(samples), 1024 * 1024);
 
-            t1.Start();
-            t2.Start();
+            thread1.Start();
+            thread2.Start();
 
-            t1.Join();
-            t2.Join();
+            thread1.Join();
+            thread2.Join();
 
             return output;
 
@@ -79,10 +79,10 @@ namespace WaveProject
                 {
                     double sumreal = 0;
                     double sumimag = 0;
-                    for (int t = 0; t < N / 2 + 1; t++)
+                    for (int t = 0; t < N; t++)
                     {
-                        sumreal += input[t].real * Math.Cos(t * k * -6.2832 / N);
-                        sumimag += input[t].ima * Math.Sin(t * k * -6.2832 / N);
+                        sumreal += input[t].real * Math.Cos(t  * (2 * Math.PI) * k / N);
+                        sumimag += input[t].ima * Math.Sin(t * (2 * Math.PI) * k / N);
                     }
                     output[k] = (sumreal - sumimag) / N;
                 }
@@ -94,10 +94,10 @@ namespace WaveProject
                 {
                     double sumreal = 0;
                     double sumimag = 0;
-                    for (int t = N / 2 + 1; t < N; t++)
+                    for (int t = 0; t < N; t++)
                     {
-                        sumreal += input[t].real * Math.Cos(t * k * -6.2832 / N);
-                        sumimag += input[t].ima * Math.Sin(t * k * -6.2832 / N);
+                        sumreal += input[t].real * Math.Cos(t * (2 * Math.PI) * k / N);
+                        sumimag += input[t].ima * Math.Sin(t * (2 * Math.PI) * k / N);
                     }
                     output[k] = (sumreal - sumimag) / N;
                 }
@@ -140,8 +140,8 @@ namespace WaveProject
                 Xim[k] = 0;
                 for (n = 0; n < num_samples; ++n)
                 {
-                    Xre[k] += (x[n] * Math.Cos(n * k * -6.2832 / num_samples));
-                    Xim[k] -= (x[n] * Math.Sin(n * k * -6.2832 / num_samples));
+                    Xre[k] += (x[n] * Math.Cos(n * k * 6.2832 / num_samples));
+                    Xim[k] -= (x[n] * Math.Sin(n * k * 6.2832 / num_samples));
                 }
 
                 P[k] = Math.Sqrt((Xre[k] * Xre[k]) + (Xim[k] * Xim[k]));

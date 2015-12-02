@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 namespace WaveProject
 {
 
-    public class Handler
+    class Handler
     {
         private DFT dft;
         public double[] copyData;
@@ -162,16 +162,17 @@ namespace WaveProject
 
         }
 
-        public void play(byte[] data)
+        public void play(Wav wav)
         {
+            save = wav.getData() ;
             savePin = GCHandle.Alloc(save, GCHandleType.Pinned);
             hWaveOut = new IntPtr();
             waveIn = this.callbackWaveOut;
             Handler.WAVEFORMAT format;
             format.wFormatTag = 1; //WAVE_FORMAT_PCM
-            format.nChannels = 1;
-            format.nSamplesPerSec = 11025;
-            format.wBitPerSample = 16;
+            format.nChannels = wav.head.channels;
+            format.nSamplesPerSec = wav.head.sampleRate;
+            format.wBitPerSample = wav.head.bitDepth;
             format.nBlockAlign = Convert.ToUInt16(format.nChannels * (format.wBitPerSample >> 3));
             format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
             savePin = GCHandle.Alloc(save, GCHandleType.Pinned);
@@ -179,8 +180,8 @@ namespace WaveProject
             //WAVE_MAPPER
 
             //new test
-            byte[] header = new byte[44];
-            Array.Copy(data, 0, header, 0, 44);
+            //byte[] header = new byte[44];
+            //Array.Copy(wav.getData(), 0, header, 0, 44);
 
             int i = Handler.waveOutOpen(ref hWaveOut, 4294967295, ref format, Marshal.GetFunctionPointerForDelegate(waveIn), 0, 0x0030000);
             if (i != 0)
@@ -256,13 +257,13 @@ namespace WaveProject
 
             if (message == 0x3c0) //WIM_DATA
             {
-                List<byte> temp = save.ToList();
-                temp.AddRange(buffer.ToList());
-                temp.RemoveAll(delegate (byte a) { return a == 0; });
+                //List<byte> temp = save.ToList();
+                //temp.AddRange(buffer.ToList());
+                //temp.RemoveAll(delegate (byte a) { return a == 0; });
 
-                save = temp.ToArray();
+                //save = temp.ToArray();
 
-                savePin = GCHandle.Alloc(save, GCHandleType.Pinned);
+                //savePin = GCHandle.Alloc(save, GCHandleType.Pinned);
 
                 int i = waveInUnprepareHeader(deviceHandle, ref header, Convert.ToUInt32(Marshal.SizeOf(header)));
                 if (i != 0) //MMSYSERR_NOERROR
