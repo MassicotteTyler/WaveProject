@@ -177,30 +177,29 @@ namespace WaveProject
         }
 
         public double[] cut(int start, int end)
-        {
-
+        { 
             double[] temp = copy(start, end);
             double[] cut = new double[real.Length - (end - start)];
-            int i, k, j;
             List<double> test = real.ToList();
             List<byte> lData = data.ToList();
             lData.RemoveRange(2 * start, (2 * end - 2 * start));
             test.RemoveRange(start, end - start);
             updateData(lData.ToArray());
-
-            //for (i = 0; i < start; i++)
-            //{
-            //    cut[i] = real[i];
-            //}
-            //for (j = i, k = 0; j < cut.Length; j++, k++)
-            //{
-            //    cut[j] = real[end + k];
-            //}
             cut = test.ToArray();
 
             real = cut;
             return temp;
             
+        }
+
+        public void delete(int start, int end)
+        {
+            double[] cut = new double[real.Length - (end - start)];
+            List<double> test = real.ToList();
+            List<byte> lData = data.ToList();
+            lData.RemoveRange(2 * start, (2 * end - 2 * start));
+            test.RemoveRange(start, end - start);
+            updateData(lData.ToArray());
         }
 
         public void updateData(byte[] newData)

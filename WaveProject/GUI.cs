@@ -40,6 +40,14 @@ namespace WaveProject
             t1 = new Thread(new ThreadStart(call_record));
             filter = new Filter();
             dft = new DFT();
+
+            setup_charts();
+            stopButton.Enabled = false;
+            playButton.Enabled = false;
+        }
+
+        private void setup_charts()
+        {
             chart2.ChartAreas[0].CursorX.IsUserEnabled = true;
             chart2.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
             chart2.ChartAreas[0].AxisX.ScaleView.Zoomable = false;
@@ -47,7 +55,6 @@ namespace WaveProject
             chart1.ChartAreas[0].CursorX.IsUserEnabled = true;
             chart1.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
             chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
-            stopButton.Enabled = false;
         }
 
         private void chart1_Click(object sender, EventArgs e)
@@ -91,7 +98,7 @@ namespace WaveProject
 
             if (wav == null)
             {
-                MessageBox.Show("Only 16bit PCM wav files", "Wav format error",
+                MessageBox.Show("Only FMT 16 PCM wav files", "Wav format error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -209,9 +216,11 @@ namespace WaveProject
         private void recordButton_Click(object sender, EventArgs e)
         {
             recordButton.Enabled = false;
+            playButton.Enabled = false;
             stopButton.Enabled = true;
             //t1 = new Thread(new ThreadStart(call_record));
-            //t1.Start();
+            //t1.Start
+            
             handle.Record();
         }
 
@@ -220,6 +229,7 @@ namespace WaveProject
             handle.recordData = handle.data_stop();
             recordButton.Enabled = true;
             stopButton.Enabled = false;
+            playButton.Enabled = true;
             if (handle.recordData != null)
             {
                 wav.setData(handle.recordData);
@@ -346,6 +356,41 @@ namespace WaveProject
 
             chart1.ChartAreas[0].AxisY.Maximum = mag.Max();
             //chart1.ChartAreas[0].AxisX.Minimum = 1;
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.C))
+            {
+                copyToolStripMenuItem_Click(this, null);
+                return true;
+            }
+
+            if (keyData == (Keys.Control | Keys.X))
+            {
+                cutToolStripMenuItem_Click(this, null);
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.V))
+            {
+                pasteToolStripMenuItem_Click(this, null);
+                return true;
+            }
+
+            if (keyData == (Keys.Delete))
+            {
+                deleteToolStripMenuItem_Click(this, null);
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int start, end;
+            getSelection(out start, out end);
+            wav.delete(start, end);
+            drawChart(wav.dataToDouble());
         }
     }
 }
