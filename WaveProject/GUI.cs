@@ -282,7 +282,7 @@ namespace WaveProject
         {
             //Complex[] result = dft.Dft(filter.hanning_window(dft.iDft(wav.df)));
             int max = (int)chart1.ChartAreas[0].AxisY.Maximum;
-            Complex[] result = dft.Dft(filter.hanning_window(wav.ima));
+            Complex[] result = dft.Dft(filter.hanning_window(wav.dataToDouble()));
             double[] mag = Complex.Mag(result);
 
             chart1.Series["Magnitude"].Points.Clear();
@@ -305,11 +305,7 @@ namespace WaveProject
             int start, end;
             getSelection(out start, out end);
             
-
-            if (start < end)
-                nData = test.GetRange(start, (end - start));
-            else
-                nData = test.GetRange(end, (start - end));
+            nData = test.GetRange(start, (end - start));
 
             wav.df = dft.Dft(nData.ToArray());
             wav.ima = nData.ToArray();
@@ -348,7 +344,7 @@ namespace WaveProject
                 chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
             }
 
-            //chart1.ChartAreas[0].AxisY.Maximum = 600;
+            chart1.ChartAreas[0].AxisY.Maximum = mag.Max();
             //chart1.ChartAreas[0].AxisX.Minimum = 1;
         }
     }
