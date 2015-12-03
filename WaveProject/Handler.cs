@@ -17,6 +17,13 @@ namespace WaveProject
         public double[] copyData;
         public byte[] recordData;
 
+        private static class Win32_msg
+        {
+            public static int MMSYSERR_NOERROR = 0;
+            public static int MM_WIM_DATA = 0x3c0;
+            public static uint WAVE_MAPPER = 4294967295;
+            public static int CALLBACK_FUNCTION = 0x0030000;
+        }
         [StructLayout(LayoutKind.Sequential)]
         public struct WAVEFORMAT
         {
@@ -111,14 +118,14 @@ namespace WaveProject
 
 
             int i = Handler.waveInPrepareHeader(this.handle, ref header, Convert.ToUInt32(Marshal.SizeOf(header)));
-            if (i != 0)
+            if (i != Win32_msg.MMSYSERR_NOERROR)
             {
                 //Error in waveIn
                 return;
             }
 
             i = Handler.waveInAddBuffer(handle, ref header, Convert.ToUInt32(Marshal.SizeOf(header)));
-            if (i != 0)
+            if (i != Win32_msg.MMSYSERR_NOERROR)
             {
                 //Error om waveInAdd
                 return;
@@ -146,8 +153,9 @@ namespace WaveProject
             format.cbSize = 0;
             //WAVE_MAPPER
 
-            int i = Handler.waveInOpen(ref handle, 4294967295, ref format, Marshal.GetFunctionPointerForDelegate(waveIn), 0, 0x0030000);
-            if (i != 0)
+            int i = Handler.waveInOpen(ref handle, Win32_msg.WAVE_MAPPER, ref format, Marshal.GetFunctionPointerForDelegate(waveIn),
+                                        0, Win32_msg.CALLBACK_FUNCTION);
+            if (i != Win32_msg.MMSYSERR_NOERROR)
             {
                 //Error
                 return;
@@ -155,9 +163,9 @@ namespace WaveProject
 
             setupBuffer();
             i = Handler.waveInStart(handle);
-            if (i != 0)
+            if (i != Win32_msg.MMSYSERR_NOERROR)
             {
-                //stuff
+                //Error
             }
 
         }
@@ -179,23 +187,14 @@ namespace WaveProject
             format.cbSize = 0;
             //WAVE_MAPPER
 
-            //new test
-            //byte[] header = new byte[44];
-            //Array.Copy(wav.getData(), 0, header, 0, 44);
-
-            int i = Handler.waveOutOpen(ref hWaveOut, 4294967295, ref format, Marshal.GetFunctionPointerForDelegate(waveIn), 0, 0x0030000);
-            if (i != 0)
+            int i = Handler.waveOutOpen(ref hWaveOut, Win32_msg.WAVE_MAPPER, ref format, Marshal.GetFunctionPointerForDelegate(waveIn),
+                                        0, Win32_msg.CALLBACK_FUNCTION);
+            if (i != Win32_msg.MMSYSERR_NOERROR)
             {
                 //Error
                 return;
             }
 
-            //int i = Handler.waveOutOpen(ref hWaveOut, 4294967295, ref format, Marshal.GetFunctionPointerForDelegate(waveIn), 0, 0x0030000);
-            //if (i != 0)
-            //{
-            //    //Error
-            //    return;
-            //}
             setupOutbuffer();
 
         }
@@ -211,11 +210,11 @@ namespace WaveProject
             Outheader.reserved = IntPtr.Zero;
 
             int i = Handler.waveOutPrepareHeader(hWaveOut, ref Outheader, Convert.ToUInt32(Marshal.SizeOf(Outheader)));
-            if (i != 0)
+            if (i != Win32_msg.MMSYSERR_NOERROR)
                 return;
 
             i = Handler.waveOutWrite(hWaveOut, ref Outheader, Convert.ToUInt32(Marshal.SizeOf(Outheader)));
-            if (i != 0)
+            if (i != Win32_msg.MMSYSERR_NOERROR)
                 return;
 
 
@@ -226,7 +225,7 @@ namespace WaveProject
         private void callbackWaveIn(IntPtr deviceHandle, uint message, IntPtr instance, ref WAVEHDR wavehdr, IntPtr reserved2)
         {
 
-            if (message == 0x3c0) //WIM_DATA
+            if (message == Win32_msg.MM_WIM_DATA)
             {
                 if (save != null)
                 {
@@ -242,7 +241,7 @@ namespace WaveProject
                 bufferPin = GCHandle.Alloc(buffer, GCHandleType.Pinned);
 
                 int i = waveInUnprepareHeader(deviceHandle, ref header, Convert.ToUInt32(Marshal.SizeOf(header)));
-                if (i != 0) //MMSYSERR_NOERROR
+                if (i != Win32_msg.MMSYSERR_NOERROR)
                 {
                     //Error
                     return;
@@ -255,10 +254,10 @@ namespace WaveProject
         private void callbackWaveOut(IntPtr deviceHandle, uint message, IntPtr instance, ref WAVEHDR wavehdr, IntPtr reserved2)
         {
 
-            if (message == 0x3c0) //WIM_DATA
+            if (message == Win32_msg.MM_WIM_DATA)
             {
                 int i = waveInUnprepareHeader(deviceHandle, ref header, Convert.ToUInt32(Marshal.SizeOf(header)));
-                if (i != 0) //MMSYSERR_NOERROR
+                if (i != Win32_msg.MMSYSERR_NOERROR) //MMSYSERR_NOERROR
                 {
                     //Error
                     return;

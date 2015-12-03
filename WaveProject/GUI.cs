@@ -64,6 +64,7 @@ namespace WaveProject
         {
             Stream stream = null;
             OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Wav files | *.wav";
             if (!(ofd.ShowDialog() == DialogResult.Cancel))
             {
                 stream = ofd.OpenFile();
@@ -82,18 +83,21 @@ namespace WaveProject
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            playButton.Enabled = false;
-            recordButton.Enabled = false;
-            zoomButton.Enabled = false;
-            selectButton.Enabled = false;
+
+            toggle_buttons(false);
 
             drawChart(wav.dataToDouble());
 
-            playButton.Enabled = true;
-            recordButton.Enabled = true;
-            zoomButton.Enabled = true;
-            selectButton.Enabled = true;
+            toggle_buttons(true);
 
+        }
+
+        private void toggle_buttons(bool toggle)
+        {
+            playButton.Enabled = toggle;
+            recordButton.Enabled = toggle;
+            zoomButton.Enabled = toggle;
+            selectButton.Enabled = toggle;
         }
 
         private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
@@ -157,12 +161,12 @@ namespace WaveProject
             chart2.ChartAreas[0].AxisX.Minimum = 0;
         }
 
-        private void drawChart(byte[] data)
+        private void drawDft(double[] mag)
         {
-            chart2.Series["Wave"].Points.Clear();
-            for (int i = 1; i < data.Length; i+=100)
+            chart1.Series["Magnitude"].Points.Clear();
+            for (int j = 1; j < mag.Length; j++)
             {
-                chart2.Series["Wave"].Points.AddXY(i, data[i] - 128);
+                chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
             }
         }
 
@@ -289,15 +293,7 @@ namespace WaveProject
 
         }
 
-        private void drawDft(double[] mag)
-        {
-            chart1.Series["Magnitude"].Points.Clear();
-            for (int j = 1; j < mag.Length; j++)
-            {
-                chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
-            }
-            //chart1.ChartAreas[0].AxisY.Maximum = mag.Max();
-        }
+
 
         private void triangleToolStripMenuItem_Click(object sender, EventArgs e)
         {
