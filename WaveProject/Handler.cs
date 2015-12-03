@@ -23,6 +23,7 @@ namespace WaveProject
             public static int MM_WIM_DATA = 0x3c0;
             public static uint WAVE_MAPPER = 4294967295;
             public static int CALLBACK_FUNCTION = 0x0030000;
+            public static int WAVE_FORMAT_PCM = 1;
         }
         [StructLayout(LayoutKind.Sequential)]
         public struct WAVEFORMAT
