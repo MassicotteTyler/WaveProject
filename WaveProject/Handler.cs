@@ -13,7 +13,7 @@ namespace WaveProject
 
     class Handler
     {
-        private DFT dft;
+
         public double[] copyData;
         public byte[] recordData;
 
@@ -257,14 +257,6 @@ namespace WaveProject
 
             if (message == 0x3c0) //WIM_DATA
             {
-                //List<byte> temp = save.ToList();
-                //temp.AddRange(buffer.ToList());
-                //temp.RemoveAll(delegate (byte a) { return a == 0; });
-
-                //save = temp.ToArray();
-
-                //savePin = GCHandle.Alloc(save, GCHandleType.Pinned);
-
                 int i = waveInUnprepareHeader(deviceHandle, ref header, Convert.ToUInt32(Marshal.SizeOf(header)));
                 if (i != 0) //MMSYSERR_NOERROR
                 {
@@ -276,36 +268,19 @@ namespace WaveProject
         }
 
 
-        public void stop()
-        {
-            List<byte> temp = buffer.ToList();
-            temp.RemoveAll(delegate (byte a) { return a == 0; });
-
-            buffer = temp.ToArray();
-
-            bufferPin.Free();
-            bufferPin = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-
-            waveInStop(handle);
-            waveInReset(handle);
-            waveInClose(handle);
-        }
-
 
         public byte[] data_stop()
         {
             waveInStop(handle);
-            //Thread.Sleep(200);
-            //waveInReset(handle);
             waveInClose(handle);
 
-
-            //buffer = temp.ToArray();
-
+            if (save == null)
+            {
+                return null;
+            }
             bufferPin.Free();
             savePin.Free();
             
-            //bufferPin = GCHandle.Alloc(buffer, GCHandleType.Pinned);
 
             return save;
         }

@@ -9,7 +9,7 @@ namespace WaveProject
 {
     class WavWriter
     {
-        public void writeFile(Wav file, string filePath)
+        public static void writeFile(Wav file, string filePath)
         {
             FileStream fileStream = new FileStream(filePath, FileMode.Create);
             BinaryWriter writer = new BinaryWriter(fileStream);
@@ -37,10 +37,6 @@ namespace WaveProject
             byte[] data = file.getData();
 
             writer.Write(data);
-
-            //writer.Seek(4, SeekOrigin.Begin);
-            //uint filesize = (uint)writer.BaseStream.Length;
-            //writer.Write(filesize - 8);
 
             writer.Close();
             fileStream.Close();

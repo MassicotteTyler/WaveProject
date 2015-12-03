@@ -19,31 +19,15 @@ namespace WaveProject
     public partial class GUI : Form
     {
 
-        [DllImport("Win32.dll")]
-
-        public static extern unsafe short* RECORDDLL();
-        private WavReader reader;
-        private WavWriter writer;
         private Handler handle;
-        private DFT dft;
         private Wav wav;
-        private Filter filter;
-        Thread t1;
 
         public GUI()
         {
             wav = new Wav();
             InitializeComponent();
-            reader = new WavReader();
-            writer = new WavWriter();
             handle = new Handler();
-            t1 = new Thread(new ThreadStart(call_record));
-            filter = new Filter();
-            dft = new DFT();
-
             setup_charts();
-            stopButton.Enabled = false;
-            playButton.Enabled = false;
         }
 
         private void setup_charts()
@@ -79,16 +63,12 @@ namespace WaveProject
         private void menuOpenFile_Click(object sender, EventArgs e)
         {
             Stream stream = null;
-            double[] real = null;
-            double[] mag = null;
-            double[] ima = null;
-            byte[] samples = null;
             OpenFileDialog ofd = new OpenFileDialog();
             if (!(ofd.ShowDialog() == DialogResult.Cancel))
             {
                 stream = ofd.OpenFile();
                 if (stream.CanRead)
-                    samples = reader.readFile(stream, out real, out ima, out wav);
+                    WavReader.readFile(stream, out wav);
             }
             else
             { 
@@ -107,15 +87,7 @@ namespace WaveProject
             zoomButton.Enabled = false;
             selectButton.Enabled = false;
 
-            double[] temp = handle.bufferByteToDouble(wav.getData());
-            byte[] control = wav.getData();
-            byte[] test = handle.doubleToBytes(real);
-            drawChart(real);
-            
-            wav.real = real;
-            wav.ima = ima;
-            
-
+            drawChart(wav.dataToDouble());
 
             playButton.Enabled = true;
             recordButton.Enabled = true;
@@ -126,17 +98,25 @@ namespace WaveProject
 
         private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-
         }
 
         private void saveAs_Click(object sender, EventArgs e)
         {
+            if (wav.getData() == null)
+            {
+                MessageBox.Show("No data to save", "Save error",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             SaveFileDialog dia = new SaveFileDialog();
-            DialogResult result = new DialogResult();
-            if ((result = dia.ShowDialog()) == DialogResult.Cancel)
+            dia.Filter = "Wav file | *.wav";
+
+            if ((dia.ShowDialog()) == DialogResult.Cancel)
                 return;
             string fileName = dia.FileName;
-            writer.writeFile(wav, fileName);
+            WavWriter.writeFile(wav, fileName);
+
         }
 
         private void zoomButton_Click(object sender, EventArgs e)
@@ -151,32 +131,20 @@ namespace WaveProject
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int start;
-            int end;
+            int start, end;
             getSelection(out start, out end);
-
-            if ((start - end) == 0)
-                return;
-           handle.copyData = wav.copy(start, end);
+            handle.copyData = wav.copy(start, end);
                 
         }
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            int index = (int)chart2.ChartAreas[0].CursorX.SelectionEnd;
 
+            wav.paste(index);
+            drawChart(wav.data_double);
+            return;
 
-            int index = (int)chart2.ChartAreas[0].CursorX.SelectionStart;
-
-            if (handle.copyData == null)
-            {
-                //Handle if Clipboard is )
-                wav.paste(index);
-                drawChart(wav.real);
-                return;
-            }
-
-            wav.paste(handle.copyData, index);
-            drawChart(wav.real);
         }
 
         private void drawChart(double[] data)
@@ -200,17 +168,13 @@ namespace WaveProject
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int start;
-            int end;
+            int start, end;
 
             getSelection(out start, out end);
 
-            if ((start - end) == 0)
-                return;
-
             handle.copyData = wav.cut(start, end);
 
-            drawChart(wav.real);
+            drawChart(wav.data_double);
         }
 
         private void recordButton_Click(object sender, EventArgs e)
@@ -218,8 +182,6 @@ namespace WaveProject
             recordButton.Enabled = false;
             playButton.Enabled = false;
             stopButton.Enabled = true;
-            //t1 = new Thread(new ThreadStart(call_record));
-            //t1.Start
             
             handle.Record();
         }
@@ -229,20 +191,20 @@ namespace WaveProject
             handle.recordData = handle.data_stop();
             recordButton.Enabled = true;
             stopButton.Enabled = false;
-            playButton.Enabled = true;
+
             if (handle.recordData != null)
             {
                 wav.setData(handle.recordData);
-                Wav nWav = new Wav(handle.recordData);
-                wav = nWav;
-                //wav.trimData();
-                //drawChart(wav.getData());
+                wav = new Wav(handle.recordData);
                 drawChart(wav.dataToDouble());
+                playButton.Enabled = true;
 
             }
             else
-                Console.Write("Record data null");
-            
+            {
+                MessageBox.Show("No data was recorded", "Recording error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }         
         }
 
         private void call_record()
@@ -253,14 +215,7 @@ namespace WaveProject
 
         private void playData(Byte[] data)
         {
-            //MemoryStream stream = new MemoryStream(data);
-            //SoundPlayer player = new SoundPlayer(stream);
-            //player.Play();
-
             handle.play(wav);
-
-
-
         }
 
         private void playButton_Click(object sender, EventArgs e)
@@ -272,14 +227,8 @@ namespace WaveProject
 
         private void lowPassToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            double[] filt = dft.createFilter((int)chart1.ChartAreas[0].CursorX.SelectionStart, wav.mag);
-            //for (int i = 0, k = 0; i < temp.Length - 2; i++, k++)
-            //{
-            //    dTemp[k] = handle.byteToDouble(temp[i], temp[++i]);
-            //}
-            double[] fSample = filter.apply_filter(wav.real, filt);
-            //temp = handle.doubleToBytes(fSample);
-
+            double[] filt = Filter.createFilter((int)chart1.ChartAreas[0].CursorX.SelectionStart, wav.mag);
+            double[] fSample = Filter.apply_filter(wav.dataToDouble(), filt);
             drawChart(fSample);
         }
 
@@ -291,18 +240,10 @@ namespace WaveProject
         private void hanningToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Complex[] result = dft.Dft(filter.hanning_window(dft.iDft(wav.df)));
-            int max = (int)chart1.ChartAreas[0].AxisY.Maximum;
-            Complex[] result = dft.Dft(filter.hanning_window(wav.dataToDouble()));
+            Complex[] result = DFT.Dft(Filter.hanning_window(wav.selection));
             double[] mag = Complex.Mag(result);
 
-            chart1.Series["Magnitude"].Points.Clear();
-            for (int j = 1; j < mag.Length ; j++)
-            {
-                chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
-            }
-
-            chart1.ChartAreas[0].AxisY.Maximum = max;
-            //chart1.ChartAreas[0].AxisX.Minimum = 1;
+            drawDft(mag);
             
         }
 
@@ -310,22 +251,18 @@ namespace WaveProject
         {
             if (wav.getData() == null)
                 return;
-            List<double> test = wav.real.ToList();
+            List<double> test = wav.dataToDouble().ToList();
             List<double> nData;
             int start, end;
             getSelection(out start, out end);
             
             nData = test.GetRange(start, (end - start));
 
-            wav.df = dft.Dft(nData.ToArray());
-            wav.ima = nData.ToArray();
+            wav.df = DFT.Dft(nData.ToArray());
+            wav.selection = nData.ToArray();
             wav.mag = Complex.Mag(wav.df);
 
-            chart1.Series["Magnitude"].Points.Clear();
-            for (int j = 1; j < wav.mag.Length; j++)
-            {
-                chart1.Series["Magnitude"].Points.AddXY(j, wav.mag[j]);
-            }
+            drawDft(wav.mag);
         }
 
         private void getSelection(out int start, out int end)
@@ -345,17 +282,29 @@ namespace WaveProject
 
         private void rectangleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Complex[] result = dft.Dft(wav.ima);
+            Complex[] result = DFT.Dft(wav.data_double);
             double[] mag = Complex.Mag(result);
 
+            drawDft(mag);
+
+        }
+
+        private void drawDft(double[] mag)
+        {
             chart1.Series["Magnitude"].Points.Clear();
             for (int j = 1; j < mag.Length; j++)
             {
                 chart1.Series["Magnitude"].Points.AddXY(j, mag[j]);
             }
+            //chart1.ChartAreas[0].AxisY.Maximum = mag.Max();
+        }
 
-            chart1.ChartAreas[0].AxisY.Maximum = mag.Max();
-            //chart1.ChartAreas[0].AxisX.Minimum = 1;
+        private void triangleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Complex[] result = DFT.Dft(wav.selection);
+            double[] mag = Complex.Mag(result);
+
+            drawDft(mag);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -392,5 +341,7 @@ namespace WaveProject
             wav.delete(start, end);
             drawChart(wav.dataToDouble());
         }
+
+
     }
 }

@@ -34,29 +34,25 @@ namespace WaveProject
             public ushort fmtBlockAlign;
             public ushort bitDepth;
 
-            public int fmtExtraSize;
-
             public byte[] dataID;
             public uint dataSize;
 
 
         }
             public uint num_samples;
-            public double[] real;
-            public double[] ima;
             public double[] mag;
+            public double[] selection;
+            public double[] data_double;
             public Complex[] df;
 
             //The wav samples
-            byte[] data;
+            private byte[] data;
 
         public Header head;
 
         public Wav()
         {
             head = new Header();
-            real = null;
-            ima = null;
             mag = null;
             handle = new Handler();
 
@@ -85,7 +81,7 @@ namespace WaveProject
 
             data = newData;
 
-            real = dataToDouble();
+            data_double = dataToDouble();
 
 
         }
@@ -119,6 +115,7 @@ namespace WaveProject
         {
 
             data = newData;
+            data_double = dataToDouble();
         }
 
 
@@ -129,7 +126,7 @@ namespace WaveProject
 
             for (int i = 0; i < end - start; i++)
             {
-                temp[i] = real[start + i];
+                temp[i] = data_double[start + i];
 
             }
 
@@ -143,18 +140,15 @@ namespace WaveProject
 
         public void paste(double[] pasteData, int index)
         {
-            double[] temp = new double[real.Length + pasteData.Length];
+
+            if (pasteData.Length == 0 || Clipboard.GetAudioStream() == null)
+                return;
+
             byte[] byteTemp = new byte[data.Length + pasteData.Length * 2];
             List<byte> bTemp = data.ToList();
+            List<double> dTemp = dataToDouble().ToList();
 
-            int i;
-            for (i = 0; i < index; i++ )
-            {
-                temp[i] = real[i];
-            }
-
-            pasteData.CopyTo(temp, index);
-
+            dTemp.InsertRange(index, pasteData);
 
 
             BinaryReader read = new BinaryReader(Clipboard.GetAudioStream());
@@ -163,39 +157,43 @@ namespace WaveProject
 
 
             updateData(bTemp.ToArray());
-            real = dataToDouble();
+            data_double = dataToDouble();
         }
 
         public void paste(int index)
         {
+
+            if (Clipboard.GetAudioStream() == null)
+                return;
+
             BinaryReader read = new BinaryReader(Clipboard.GetAudioStream());
             byte[] byteTemp = read.ReadBytes((int)Clipboard.GetAudioStream().Length);
             List<byte> bTemp = data.ToList();
             bTemp.InsertRange(index * 2, byteTemp);
             updateData(bTemp.ToArray());
-            real = dataToDouble();
+            data_double = dataToDouble();
         }
 
         public double[] cut(int start, int end)
         { 
             double[] temp = copy(start, end);
-            double[] cut = new double[real.Length - (end - start)];
-            List<double> test = real.ToList();
+            double[] cut = new double[data_double.Length - (end - start)];
+            List<double> test = data_double.ToList();
             List<byte> lData = data.ToList();
             lData.RemoveRange(2 * start, (2 * end - 2 * start));
             test.RemoveRange(start, end - start);
             updateData(lData.ToArray());
             cut = test.ToArray();
 
-            real = cut;
+            data_double = cut;
             return temp;
             
         }
 
         public void delete(int start, int end)
         {
-            double[] cut = new double[real.Length - (end - start)];
-            List<double> test = real.ToList();
+            double[] cut = new double[data_double.Length - (end - start)];
+            List<double> test = data_double.ToList();
             List<byte> lData = data.ToList();
             lData.RemoveRange(2 * start, (2 * end - 2 * start));
             test.RemoveRange(start, end - start);

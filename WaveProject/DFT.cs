@@ -11,7 +11,7 @@ namespace WaveProject
     {
 
 
-        public Complex[] Dft(double[] samples)
+        public static Complex[] Dft(double[] samples)
         {
             int N = samples.Length;
             Thread thread1, thread2;
@@ -65,7 +65,7 @@ namespace WaveProject
         }
 
 
-        public double[] iDft(Complex[] input)
+        public static double[] iDft(Complex[] input)
         {
             int N = input.Length;
 
@@ -116,64 +116,10 @@ namespace WaveProject
 
             return output;
         }
-        //Calculates the length of the complex vector using pythag
-        public double calc_length(Complex num)
-        {
-            double real = num.real;
-            double ima = num.ima;
-
-            double length = Math.Sqrt(Math.Pow(real, 2) + Math.Pow(ima, 2));
-            return length;
-        }
-        public double[] _dft(double[] samples, int num_samples, out double[] power)
-        {
-            int k, n;
-            double[] x = samples; 
-            double[] Xre = new double[num_samples];
-            double[] Xim = new double[num_samples];
-            double[] P = new double[num_samples];
 
 
-            for (k = 0; k < num_samples; ++k)
-            {
-                Xre[k] = 0;
-                Xim[k] = 0;
-                for (n = 0; n < num_samples; ++n)
-                {
-                    Xre[k] += (x[n] * Math.Cos(n * k * 6.2832 / num_samples));
-                    Xim[k] -= (x[n] * Math.Sin(n * k * 6.2832 / num_samples));
-                }
 
-                P[k] = Math.Sqrt((Xre[k] * Xre[k]) + (Xim[k] * Xim[k]));
 
-            }
-            power = P;
-            return Xre;
-        }
-
-        //remove 
-        public double[] createFilter(int selection, double[] samples)
-        {
-            double[] filter;
-            Complex[] temp = new Complex[samples.Length];
-
-            temp[0] = new Complex(1, 1);
-            int i, k;
-            for (i = 1, k = temp.Length - 1; i < selection; i++, k--)
-            {
-                temp[i] = new Complex(1, 1);
-                temp[k] = new Complex(1, 1) ;
-            }
-            for (i = selection; i < temp.Length / 2 + 1; i++, k--)
-            {
-                temp[i] = new Complex(0, 0);
-                temp[k] = new Complex(0, 0) ;
-            }
-
-            filter = iDft(temp);
-
-            return filter;
-        }
 
     }
 }

@@ -98,9 +98,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DFT\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="DFT.dll" />
     <None Include="Resources\magnifier.png" />
