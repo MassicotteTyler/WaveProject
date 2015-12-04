@@ -24,6 +24,8 @@ namespace WaveProject
             public static uint WAVE_MAPPER = 4294967295;
             public static int CALLBACK_FUNCTION = 0x0030000;
             public static int WAVE_FORMAT_PCM = 1;
+            public static uint WHDR_BEGINLOOP = 0x00000004;
+            public static uint WHDR_ENDLOOP = 0x00000008;
         }
         [StructLayout(LayoutKind.Sequential)]
         public struct WAVEFORMAT
@@ -128,7 +130,7 @@ namespace WaveProject
             i = Handler.waveInAddBuffer(handle, ref header, Convert.ToUInt32(Marshal.SizeOf(header)));
             if (i != Win32_msg.MMSYSERR_NOERROR)
             {
-                //Error om waveInAdd
+                //Error on waveInAdd
                 return;
 
             }
@@ -167,6 +169,7 @@ namespace WaveProject
             if (i != Win32_msg.MMSYSERR_NOERROR)
             {
                 //Error
+                return;
             }
 
         }
@@ -204,7 +207,7 @@ namespace WaveProject
         {
             Outheader.lpData = savePin.AddrOfPinnedObject();
             Outheader.dwBufferLength = (uint)save.Length;
-            Outheader.dwFlags = 0x00000004 | 0x00000008;
+            Outheader.dwFlags = Win32_msg.WHDR_BEGINLOOP | Win32_msg.WHDR_ENDLOOP;
             Outheader.dwBytesRecorded = 0;
             Outheader.dwLoops = 1;
             Outheader.lpNext = IntPtr.Zero;
@@ -217,9 +220,6 @@ namespace WaveProject
             i = Handler.waveOutWrite(hWaveOut, ref Outheader, Convert.ToUInt32(Marshal.SizeOf(Outheader)));
             if (i != Win32_msg.MMSYSERR_NOERROR)
                 return;
-
-
-
         }
 
 
@@ -286,8 +286,6 @@ namespace WaveProject
         }
 
 
-
-
         public Handler()
         {
 
@@ -297,35 +295,6 @@ namespace WaveProject
         {
             short s = (short)((SecondByte << 8) | firstByte);
             return s / 32768.0;
-        }
-
-        public double[] bufferByteToDouble(byte[] values)
-        {
-            double[] result = new double[values.Length / 8];
-            Buffer.BlockCopy(values, 0, result, 0, result.Length);
-            return result;
-        }
-
-        public byte[] doubleToBytes(double[] values)
-        {
-
-            List<byte> result = new List<byte>();
-            for (int i = 0; i < values.Length; i++)
-            {
-                result.AddRange(doubleConvert(values[i]));
-            }
-            return result.ToArray();
-        }
-
-        private byte[] doubleConvert(double value)
-        {
-            byte[] output = new byte[8];
-            long lng = BitConverter.DoubleToInt64Bits(value);
-            for (int i = 0; i < 8; i++)
-                output[i] = (byte)((lng >> ((7 - i) * 8)) & 0xff);
-            return output;
-        }
-
-        
+        }        
     }
 }
