@@ -1,9 +1,9 @@
-﻿using System;
+﻿//Tyler Massicotte A00855150 2015
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-//using System.Numerics;
 
 namespace WaveProject
 {

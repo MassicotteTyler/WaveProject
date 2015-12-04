@@ -41,7 +41,6 @@ namespace WaveProject
 
         }
 
-        public uint num_samples;
         public double[] mag;
         public double[] selection;
         public double[] data_double;
@@ -82,7 +81,7 @@ namespace WaveProject
             head.fmtCode = 1;
             head.channels = 1;
             head.sampleRate = 11025;
-            head.fmtAvgBPS = 11025;
+            head.fmtAvgBPS = 22050;
             head.fmtBlockAlign = 2;
             head.bitDepth = 16;
 
@@ -133,6 +132,11 @@ namespace WaveProject
         }
 
 
+        /********************************************************
+        * Copy saves all the data from the start and until the end
+        * index from the original byte array and stores it in the
+        * Clipboard.
+        **********************************************************/
         public double[] copy(int start, int end)
         {
             double[] temp = new double[(end - start)];
@@ -152,31 +156,13 @@ namespace WaveProject
             return temp;
         }
 
-        public void paste(double[] pasteData, int index)
-        {
-
-            if (pasteData.Length == 0 || Clipboard.GetAudioStream() == null)
-                return;
-
-            byte[] byteTemp = new byte[data.Length + pasteData.Length * 2];
-            List<byte> bTemp = data.ToList();
-            List<double> dTemp = dataToDouble().ToList();
-
-            dTemp.InsertRange(index, pasteData);
-
-
-            BinaryReader read = new BinaryReader(Clipboard.GetAudioStream());
-            byteTemp = read.ReadBytes(byteTemp.Length);
-            bTemp.InsertRange(index * 2, byteTemp);
-
-
-            updateData(bTemp.ToArray());
-            data_double = dataToDouble();
-        }
-
+        /********************************************************
+        * Paste grabs the data from the Clipboard and inserts it
+        * at the specified index and updates the header filesize.
+        **********************************************************/
         public void paste(int index)
         {
-
+            //If there is no data to paste
             if (Clipboard.GetAudioStream() == null)
                 return;
 
@@ -188,40 +174,56 @@ namespace WaveProject
             data_double = dataToDouble();
         }
 
+        /********************************************************
+        * Cut calls copy on the data selected between start and end.
+        * It then removes the data selected and updates the header
+        * format accordingly.
+        **********************************************************/
         public double[] cut(int start, int end)
         { 
             double[] temp = copy(start, end);
-            double[] cut = new double[data_double.Length - (end - start)];
-            List<double> test = data_double.ToList();
             List<byte> lData = data.ToList();
             lData.RemoveRange(2 * start, (2 * end - 2 * start));
-            test.RemoveRange(start, end - start);
             updateData(lData.ToArray());
-            cut = test.ToArray();
-
-            data_double = cut;
+            data_double = dataToDouble();
             return temp;
             
         }
 
+        /********************************************************
+        * Delete removes all data specified in the range between
+        * start and end. Then it updates the header information
+        * accordingly.
+        **********************************************************/
         public void delete(int start, int end)
         {
             double[] cut = new double[data_double.Length - (end - start)];
-            List<double> test = data_double.ToList();
             List<byte> lData = data.ToList();
             lData.RemoveRange(2 * start, (2 * end - 2 * start));
-            test.RemoveRange(start, end - start);
             updateData(lData.ToArray());
+            data_double = dataToDouble();
         }
 
+        /********************************************************
+        * Takes in an array of bytes representing the new wav data.
+        * it assigns the new data to the data member while also 
+        * updating the file and data size in the format header.
+        **********************************************************/
         public void updateData(byte[] newData)
         {
-
             head.fileSize = 36 + (uint)newData.Length;
             head.dataSize = (uint)newData.Length;
-
             data = newData;
         }
+
+
+        /********************************************************
+        * toArray takes all the data from the header and adds it 
+        * to a byte list. It then adds all the sample data to the
+        * list. The list is then converted to an array. This array
+        * will be a properly formatted .wav file ready to save or 
+        * play. It returns the .wav byte array created by the list.
+        **********************************************************/
         public byte[] toArray()
         {
             List<byte> arr = new List<byte>();
@@ -241,27 +243,7 @@ namespace WaveProject
             arr.AddRange(BitConverter.GetBytes(head.dataSize));
             arr.AddRange(data);
 
-
-
             return arr.ToArray();
         }
-
-        public void trimData()
-        {
-            int i;
-            
-            for (i= 0; i < data.Length && !(data[i] == (byte)0); i++);
-
-            byte[] temp = new byte[i];
-            Array.Copy(data, temp, i);
-            data = temp;
-            head.fileSize = (uint)(36 + data.Length);
-            head.dataSize = (uint)data.Length;
-
-        }
-
-
-
-
     }
 }

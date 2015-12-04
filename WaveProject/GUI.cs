@@ -364,17 +364,11 @@ namespace WaveProject
 
         /*****************************************************************
         * Gets called when the user clicks the hanning menu strip item.
-        * It applies the hanning window function to the selected samples
-        * and then preforms Discrete Fourier Transform on them. It then 
-        * draws the new Dft data to the chart.
+        * It sets the window selection variable to represent hanning.
         ******************************************************************/
         private void hanningToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Complex[] result = DFT.Dft(Filter.hanning_window(wav.selection));
-            double[] mag = Complex.Mag(result);
-
-            drawDft(mag);
-            
+            window_selection = 2;
         }
 
 
@@ -390,17 +384,30 @@ namespace WaveProject
             if (wav.getData() == null)
                 return;
             List<double> test = wav.dataToDouble().ToList();
-            List<double> nData;
+            double[] nData;
             int start, end;
             getSelection(out start, out end);
             
-            nData = test.GetRange(start, (end - start));
+            nData = test.GetRange(start, (end - start)).ToArray();
 
-            wav.df = DFT.Dft(nData.ToArray());
+            wav.df = DFT.Dft(apply_window(nData));
             wav.selection = nData.ToArray();
             wav.mag = Complex.Mag(wav.df);
 
             drawDft(wav.mag);
+        }
+
+        private double[] apply_window(double[] samples)
+        {
+            switch(window_selection)
+            {
+                case 1:
+                    return Filter.triangle_window(samples);
+                case 2:
+                    return Filter.hanning_window(samples);             
+            }
+
+            return Filter.rectangle_window(samples) ;
         }
 
 
@@ -428,33 +435,24 @@ namespace WaveProject
 
 
         /*****************************************************************
-        * Gets called when the user clicks on the rectangle window menu
-        * item. It applies the rectangle window function to selected samples
-        * and then passes it through a Discrete Fourier Transform. The DFT
-        * data is then drawn to the chart.
+        * Gets called when the user clicks the hanning menu strip item.
+        * It sets the window selection variable to represent rectangle
+        * window function.
         ******************************************************************/
         private void rectangleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Complex[] result = DFT.Dft(wav.data_double);
-            double[] mag = Complex.Mag(result);
-
-            drawDft(mag);
-
+            window_selection = 0;
         }
 
 
         /*****************************************************************
-        * Gets called when the user clicks on the triangle window menu
-        * item. It applies the triangle window function to the selected 
-        * samples and performs a Discrete Fourier Transform on them. The 
-        * DFT data is then drawn to the chart.
+        * Gets called when the user clicks the hanning menu strip item.
+        * It sets the window selection variable to represent triangle
+        * window function.
         ******************************************************************/
         private void triangleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Complex[] result = DFT.Dft(wav.selection);
-            double[] mag = Complex.Mag(result);
-
-            drawDft(mag);
+            window_selection = 1;
         }
 
 

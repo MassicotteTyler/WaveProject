@@ -66,6 +66,17 @@ namespace WaveProject
             return output;
         }
 
+        public static double[] rectangle_window(double[] samples)
+        {
+            double[] output = new double[samples.Length];
+            for (int i = 0; i < samples.Length; i++)
+            {
+                output[i] = samples[i] * 1;
+            }
+
+            return output;
+        }
+
         public static double[] triangle_window(double[] samples)
         {
             double[] output = new double[samples.Length];

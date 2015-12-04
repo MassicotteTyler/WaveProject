@@ -47,12 +47,8 @@ namespace WaveProject
             if (waveFile.head.fmtSize != 16) //only fmt to read for now
             {
                 file = null;
-                return; 
+                return;
             }
-
-
-            waveFile.num_samples = (uint)(waveFile.head.dataSize /
-                         (waveFile.head.channels * waveFile.head.bitDepth) / 8);
 
             //Read the sample data and add it to the wav object.
             waveFile.setData(reader.ReadBytes((int)waveFile.head.dataSize));
