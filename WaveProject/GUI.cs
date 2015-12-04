@@ -27,6 +27,9 @@ namespace WaveProject
         private Handler handle;
         private Wav wav;
 
+        //0 for Rectangle, 1 for Triangle, 2 for Hanning
+        private int window_selection;
+
         /*****************************************************************
         * Default constructor. Initilizates a blank wav file, and creates 
         * the handler object. As well as initalize any UI components.
@@ -37,6 +40,8 @@ namespace WaveProject
             handle = new Handler();
             InitializeComponent();
             setup_charts();
+            //Default to rectangle window
+            window_selection = 0;
         }
 
 
@@ -301,8 +306,7 @@ namespace WaveProject
             stopButton.Enabled = false;
 
             if (handle.recordData != null)
-            {
-                wav.setData(handle.recordData);
+            { 
                 wav = new Wav(handle.recordData);
                 drawChart(wav.dataToDouble());
                 playButton.Enabled = true;

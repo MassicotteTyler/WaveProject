@@ -187,7 +187,6 @@ namespace WaveProject
             format.wBitPerSample = wav.head.bitDepth;
             format.nBlockAlign = Convert.ToUInt16(format.nChannels * (format.wBitPerSample >> 3));
             format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
-            savePin = GCHandle.Alloc(save, GCHandleType.Pinned);
             format.cbSize = 0;
 
             int i = Handler.waveOutOpen(ref hWaveOut, Win32_msg.WAVE_MAPPER, ref format, Marshal.GetFunctionPointerForDelegate(waveIn),

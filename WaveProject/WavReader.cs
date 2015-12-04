@@ -1,4 +1,4 @@
-﻿/* WavReader reads in wave file data and converts it to a Wav class file. */
+﻿//Tyler Massicotte A00855150
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +8,24 @@ using System.IO;
 
 namespace WaveProject
 {
+    /********************************************************
+    * The WavReader class is responsible for reading a wav file
+    * from a specified location. It creates a Wav object and stores
+    * the data read into it.
+    **********************************************************/
     class WavReader
     {
 
+        /********************************************************
+        * readFile takes in a filestream and has an out parameter
+        * wav object. It reads in the specified wav file. Allocating
+        * the first 44 bytes to as the format header. It checks the
+        * fmtsize as this program only handles FMT 16 and PCM.
+        * once all the data has been read the wav file is assigned.
+        **********************************************************/
         public static void readFile(Stream stream, out Wav file)
         { 
             Wav waveFile = new Wav();
-            Handler hand = new Handler();
             BinaryReader reader = new BinaryReader(stream);
             //Read the wave file header from the buffer
 
@@ -43,7 +54,10 @@ namespace WaveProject
             waveFile.num_samples = (uint)(waveFile.head.dataSize /
                          (waveFile.head.channels * waveFile.head.bitDepth) / 8);
 
+            //Read the sample data and add it to the wav object.
             waveFile.setData(reader.ReadBytes((int)waveFile.head.dataSize));
+
+            //Assign the wav object to the out parameter.
             file = waveFile;
         }
 

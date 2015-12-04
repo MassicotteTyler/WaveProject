@@ -1,4 +1,5 @@
-﻿using System;
+﻿//Tyler Massicotte A00855150 2015
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -8,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace WaveProject
 {
-    /*
+    /************************************************************************************************************
     * The Wav class is a reimplementation of the format structure wav files use. A Wav object represents wav data
-    * either recordered or opened from a file. The class has methods to manipulate the sample data of the wav while 
+    * either recorded or read from a file. The class has methods to manipulate the sample data of the wav while 
     * updating the header values accordingly.
-    */
+    ************************************************************************************************************/
     class Wav
     {
 
@@ -39,25 +40,36 @@ namespace WaveProject
 
 
         }
-            public uint num_samples;
-            public double[] mag;
-            public double[] selection;
-            public double[] data_double;
-            public Complex[] df;
 
-            //The wav samples
-            private byte[] data;
+        public uint num_samples;
+        public double[] mag;
+        public double[] selection;
+        public double[] data_double;
+        public Complex[] df;
 
+        //The wav samples
+        private byte[] data;
+
+        //The header file to store the format values.
         public Header head;
 
+        /********************************************************
+        * Default constructor. Initializes the header and the 
+        * handler objects.
+        **********************************************************/
         public Wav()
         {
             head = new Header();
-            mag = null;
             handle = new Handler();
 
         }
 
+        /********************************************************
+        * Constructor: Takes in a byte array of new samples and
+        * creates the corresponding header file. Uses preset values
+        * for the format, channels and sample rate as this is the 
+        * default for recording.
+        **********************************************************/
         public Wav(byte[] newData)
         {
             head = new Header();
@@ -76,8 +88,6 @@ namespace WaveProject
 
             head.dataID = System.Text.Encoding.ASCII.GetBytes("data");
             head.dataSize = (uint)newData.Length;
-
-
 
             data = newData;
 
@@ -110,7 +120,11 @@ namespace WaveProject
             return data;
         }
 
-        //replaced by updateData. Remove.
+        /********************************************************
+        * Gets called when a wav file is being read from a disk.
+        * sets the assigns newData to the private memeber data. 
+        * Then generates the double version of the byte array.
+        **********************************************************/
         public void setData (byte[] newData)
         {
 
