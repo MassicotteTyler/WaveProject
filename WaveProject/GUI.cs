@@ -1,4 +1,5 @@
-﻿using System;
+﻿//Tyler Massicotte A00855150 2015
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,21 +16,33 @@ using System.Media;
 namespace WaveProject
 {
 
-
+/*****************************************************************
+* GUI is the child window that gets created by the main menu.
+* This window has a menu bar to open or save Wav files. Two chart
+* areas inside the window draw the Wav files data.
+******************************************************************/
     public partial class GUI : Form
     {
 
         private Handler handle;
         private Wav wav;
 
+        /*****************************************************************
+        * Default constructor. Initilizates a blank wav file, and creates 
+        * the handler object. As well as initalize any UI components.
+        ******************************************************************/
         public GUI()
         {
             wav = new Wav();
-            InitializeComponent();
             handle = new Handler();
+            InitializeComponent();
             setup_charts();
         }
 
+
+        /*****************************************************************
+        * Initializes the starting chart settings. The charts cannot zoom.
+        ******************************************************************/
         private void setup_charts()
         {
             chart2.ChartAreas[0].CursorX.IsUserEnabled = true;
@@ -38,32 +51,56 @@ namespace WaveProject
 
             chart1.ChartAreas[0].CursorX.IsUserEnabled = true;
             chart1.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
-            chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = false;
         }
 
+        /*****************************************************************
+        * Gets called when chart1 gets clicked.  Doesn't do anything but 
+        * had to be overridden. 
+        ******************************************************************/
         private void chart1_Click(object sender, EventArgs e)
         {
-
         }
 
+        /*****************************************************************
+        * Gets called when chart2 gets clicked.  Doesn't do anything but 
+        * had to be overridden. 
+        ******************************************************************/
         private void chart2_Click(object sender, EventArgs e)
         {
         }
 
+        /*****************************************************************
+        * Gets called when the open file dialog triggers FileOk. Is empty
+        * but had to be overridden.
+        ******************************************************************/
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
 
         }
 
+        /*****************************************************************
+        * Gets called when the menuStrip gets clicked. Is empty but had to
+        * be overridden.
+        ******************************************************************/
         private void menuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             
         }
 
+        /*****************************************************************
+        * Gets called when the tool bar button Open gets clicked. Method 
+        * creates an open file dialog and prompts the user to load a file.
+        * If the user selects a valid file it will be read in user the
+        * WavReader class. Once the data has been loaded it draws the Wav
+        * files data to the chart.
+        ******************************************************************/
         private void menuOpenFile_Click(object sender, EventArgs e)
         {
             Stream stream = null;
             OpenFileDialog ofd = new OpenFileDialog();
+
+            //Sets the default filter to display .wav files 
             ofd.Filter = "Wav files | *.wav";
             if (!(ofd.ShowDialog() == DialogResult.Cancel))
             {
@@ -92,6 +129,10 @@ namespace WaveProject
 
         }
 
+        /*****************************************************************
+        * Takes in a boolean value and applies it to a list of buttons.
+        * It is used to easily toggle all the buttons on or off.
+        ******************************************************************/
         private void toggle_buttons(bool toggle)
         {
             playButton.Enabled = toggle;
@@ -100,12 +141,23 @@ namespace WaveProject
             selectButton.Enabled = toggle;
         }
 
+        /*****************************************************************
+        * Gets called when the save file dialog triggers FileOk. Is empty
+        * but had to be overridden.
+        ******************************************************************/
         private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
         {
         }
 
+        /*****************************************************************
+        * Gets called when the tool bar button Save gets clicked. Method 
+        * creates a save file dialog and prompts the user to save a file.
+        * If the user selects a valid file location it will be written to
+        * the disk by the WavWriter.
+        ******************************************************************/
         private void saveAs_Click(object sender, EventArgs e)
         {
+            //If there is no data to save, don't save it.
             if (wav.getData() == null)
             {
                 MessageBox.Show("No data to save", "Save error",
@@ -123,16 +175,31 @@ namespace WaveProject
 
         }
 
+        /*****************************************************************
+        * Gets called when the zoom button gets clicked. Enables the
+        * charts to zoom when the use makes a selection.
+        ******************************************************************/
         private void zoomButton_Click(object sender, EventArgs e)
         {
             chart2.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
         }
 
+        /*****************************************************************
+        * Gets called when the select button gets clicked. Disables the
+        * zoom feature of the charts and enables the user to select an area.
+        ******************************************************************/
         private void selectButton_Click(object sender, EventArgs e)
         {
             chart2.ChartAreas[0].AxisX.ScaleView.Zoomable = false;
+            chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = false;
         }
 
+        /*****************************************************************
+        * Gets called when the copy menu button gets clicked. It gets the 
+        * users selection and calls the corresponding handle function for
+        * copying.
+        ******************************************************************/
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int start, end;
@@ -141,6 +208,12 @@ namespace WaveProject
                 
         }
 
+        /*****************************************************************
+        * Gets called when the paste tool bar button is clicked. It gets
+        * the user selection and calls the Wav paste function to paste the
+        * data at the selected index. It then calls drawchart to update the
+        * charts data.
+        ******************************************************************/
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int index = (int)chart2.ChartAreas[0].CursorX.SelectionEnd;
@@ -151,6 +224,11 @@ namespace WaveProject
 
         }
 
+
+        /*****************************************************************
+        * Takes in a double array of Wave samples and plots them to the 
+        * chart.
+        ******************************************************************/
         private void drawChart(double[] data)
         {
             chart2.Series["Wave"].Points.Clear();
@@ -161,6 +239,12 @@ namespace WaveProject
             chart2.ChartAreas[0].AxisX.Minimum = 0;
         }
 
+
+        /*****************************************************************
+        * Takes in a double array of samples that have been passed through
+        * a discrete Fourier transform. It clears any previously drawn data
+        * and plots the new data.
+        ******************************************************************/
         private void drawDft(double[] mag)
         {
             chart1.Series["Magnitude"].Points.Clear();
@@ -170,6 +254,13 @@ namespace WaveProject
             }
         }
 
+
+        /*****************************************************************
+        * Gets called when the user clicked on the cut tool bar item. It
+        * gets the users selection of the frequency chart and calls wav.cut
+        * and storing the copied data into the clipboard and locally.
+        * It then redraws the changed Wave data.
+        ******************************************************************/
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int start, end;
@@ -181,6 +272,12 @@ namespace WaveProject
             drawChart(wav.data_double);
         }
 
+
+        /*****************************************************************
+        * Gets called when the user clicks the Record button. It disables
+        * the record, play and stop button and sends the signal to the win32
+        * class to start recording.
+        ******************************************************************/
         private void recordButton_Click(object sender, EventArgs e)
         {
             recordButton.Enabled = false;
@@ -190,6 +287,13 @@ namespace WaveProject
             handle.Record();
         }
 
+        /*****************************************************************
+        * Gets called when the user clicks the stop button. It sends the 
+        * message to the win32 handle to stop recording and acquires the
+        * recorded samples. The buttons are then re-enabled and if data was
+        * recorded a new wav file is created and drawn to the chart. If no
+        * data was recorded an error message is displayed.
+        ******************************************************************/
         private void stopButton_Click(object sender, EventArgs e)
         {
             handle.recordData = handle.data_stop();
@@ -211,39 +315,57 @@ namespace WaveProject
             }         
         }
 
-        private void call_record()
-        {
-            byte[] temp = handle.Record();
-            handle.recordData = temp;
-        }
 
-        private void playData(Byte[] data)
+        /*****************************************************************
+        * Gets called when the user clicks the play button. It takes the 
+        * current Wav file and passes it to the win32 handle to be played.
+        ******************************************************************/
+        private void playButton_Click(object sender, EventArgs e)
         {
             handle.play(wav);
         }
 
-        private void playButton_Click(object sender, EventArgs e)
-        {
-            byte[] data = wav.toArray();
-            playData(data);
 
-        }
-
+        /*****************************************************************
+        * Gets called when the user clicks the low pass filter item in the
+        * menu strip. It creates the low pass filter based on the users 
+        * selected of the temporal domain. It then applies the filter to
+        * the Wave data and updates the data inside the wav object. It then
+        * redraws the changed data to the chart.
+        ******************************************************************/
         private void lowPassToolStripMenuItem_Click(object sender, EventArgs e)
         {
             double[] filt = Filter.createFilter((int)chart1.ChartAreas[0].CursorX.SelectionStart, wav.mag);
             double[] fSample = Filter.apply_filter(wav.dataToDouble(), filt);
+
+            byte[] samples = new byte[fSample.Length * 2];
+
+            for (int i = 0, pos = 0; pos < samples.Length; i++, pos++)
+            {
+                handle.doubleToBytes(fSample[i], out samples[pos], out samples[++pos]);
+            }
+            wav.updateData(samples);
             drawChart(fSample);
         }
 
+        /*****************************************************************
+        * Gets called when the GUI object has load. It is used as an action
+        * listening but its body is empty.
+        ******************************************************************/
         private void GUI_Load(object sender, EventArgs e)
         {
 
         }
 
+
+        /*****************************************************************
+        * Gets called when the user clicks the hanning menu strip item.
+        * It applies the hanning window function to the selected samples
+        * and then preforms Discrete Fourier Transform on them. It then 
+        * draws the new Dft data to the chart.
+        ******************************************************************/
         private void hanningToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Complex[] result = dft.Dft(filter.hanning_window(dft.iDft(wav.df)));
             Complex[] result = DFT.Dft(Filter.hanning_window(wav.selection));
             double[] mag = Complex.Mag(result);
 
@@ -251,6 +373,14 @@ namespace WaveProject
             
         }
 
+
+        /*****************************************************************
+        * Gets called when the user clicks the DFT menu strip item. Checks
+        * if there is data to preform DFT on. If not it returns silently.
+        * It then gets the data selected by the user, applies the selected
+        * window function. Then is passed through a Discrete Fourier
+        * Transform. The DFT data is then drawn to the chart.
+        ******************************************************************/
         private void showTemporalToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (wav.getData() == null)
@@ -269,6 +399,13 @@ namespace WaveProject
             drawDft(wav.mag);
         }
 
+
+        /*****************************************************************
+        * Get selection gets the values of the chart the user has selected.
+        * it takes in two into to assign the start and end value to. Which
+        * ever value is the smallest is applied to start, and the largest
+        * to end.
+        ******************************************************************/
         private void getSelection(out int start, out int end)
         {
             start = (int)chart2.ChartAreas[0].CursorX.SelectionStart - 1;
@@ -276,6 +413,7 @@ namespace WaveProject
             if (start < 0) start = 0;
             if (end < 0) end = 0;
 
+            //Two variable swap
             if (start > end)
             {
                 start = start + end;
@@ -284,6 +422,13 @@ namespace WaveProject
             }    
         }
 
+
+        /*****************************************************************
+        * Gets called when the user clicks on the rectangle window menu
+        * item. It applies the rectangle window function to selected samples
+        * and then passes it through a Discrete Fourier Transform. The DFT
+        * data is then drawn to the chart.
+        ******************************************************************/
         private void rectangleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Complex[] result = DFT.Dft(wav.data_double);
@@ -294,7 +439,12 @@ namespace WaveProject
         }
 
 
-
+        /*****************************************************************
+        * Gets called when the user clicks on the triangle window menu
+        * item. It applies the triangle window function to the selected 
+        * samples and performs a Discrete Fourier Transform on them. The 
+        * DFT data is then drawn to the chart.
+        ******************************************************************/
         private void triangleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Complex[] result = DFT.Dft(wav.selection);
@@ -303,6 +453,14 @@ namespace WaveProject
             drawDft(mag);
         }
 
+
+        /*****************************************************************
+        * Process the key presses made while this window is in focus.
+        * If Control + C are pressed, Copy is called.
+        * If Control + X are pressed, Cut is called.
+        * If Control + V are pressed, Paste is called.
+        * If Delete is pressed, Delete is called.
+        ******************************************************************/
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == (Keys.Control | Keys.C))
@@ -330,6 +488,12 @@ namespace WaveProject
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+
+        /*****************************************************************
+        * Gets Called when the user clicks on the delete menu item. Calls
+        * the wav delete function on the data selected by the user and draws
+        * the new data to the chart.
+        ******************************************************************/
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int start, end;

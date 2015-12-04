@@ -149,7 +149,7 @@ namespace WaveProject
             //format.nBlockAlign = Convert.ToUInt16(format.nChannels *(format.wBitPerSample >> 3));
             format.nBlockAlign = 2;
             format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
-            bufferLength = 22050; //format.nAvgBytesPerSec /800 16384
+            bufferLength = 11025; //format.nAvgBytesPerSec /800 16384
             buffer = new byte[bufferLength];
             save = null;
             bufferPin = GCHandle.Alloc(buffer, GCHandleType.Pinned);
@@ -189,7 +189,6 @@ namespace WaveProject
             format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
             savePin = GCHandle.Alloc(save, GCHandleType.Pinned);
             format.cbSize = 0;
-            //WAVE_MAPPER
 
             int i = Handler.waveOutOpen(ref hWaveOut, Win32_msg.WAVE_MAPPER, ref format, Marshal.GetFunctionPointerForDelegate(waveIn),
                                         0, Win32_msg.CALLBACK_FUNCTION);
@@ -231,7 +230,7 @@ namespace WaveProject
                 if (save != null)
                 {
                     List<byte> temp = save.ToList();
-                    temp.AddRange(buffer.ToList());
+                    temp.AddRange(buffer.ToList().GetRange(0, (int)wavehdr.dwBytesRecorded));
                     save = temp.ToArray();
                 }
                 else
@@ -295,6 +294,13 @@ namespace WaveProject
         {
             short s = (short)((SecondByte << 8) | firstByte);
             return s / 32768.0;
-        }        
+        }     
+   
+        public void doubleToBytes(double sample, out byte b1, out byte b2)
+        {
+            short s = (short) (sample * 32768);
+            b1 = (byte) s;
+            b2 =  (byte) (s >> 8);
+        }
     }
 }
