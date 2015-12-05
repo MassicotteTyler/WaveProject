@@ -16,7 +16,7 @@ namespace WaveProject
     ************************************************************************************************************/
     class Wav
     {
-
+        //Object used to handle data processing and type conversion
         private Handler handle;
 
         /* Inner class Header represents the first 44 bytes of a wav file. All the format data is contained inside. */
@@ -81,7 +81,7 @@ namespace WaveProject
             head.fmtCode = 1;
             head.channels = 1;
             head.sampleRate = 11025;
-            head.fmtAvgBPS = 22050;
+            head.fmtAvgBPS = 11025;
             head.fmtBlockAlign = 2;
             head.bitDepth = 16;
 

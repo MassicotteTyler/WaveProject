@@ -1,4 +1,5 @@
-﻿namespace WaveProject
+﻿//Tyler Massicotte A00855150
+namespace WaveProject
 {
     partial class GUI
     {
@@ -51,7 +52,6 @@
             this.triangleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dFTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showTemporalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -74,8 +74,7 @@
             this.viewToolStripMenuItem,
             this.filterToolStripMenuItem,
             this.windowingToolStripMenuItem,
-            this.dFTToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.dFTToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(744, 24);
@@ -96,14 +95,16 @@
             // menuOpenFile
             // 
             this.menuOpenFile.Name = "menuOpenFile";
-            this.menuOpenFile.Size = new System.Drawing.Size(112, 22);
+            this.menuOpenFile.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.menuOpenFile.Size = new System.Drawing.Size(152, 22);
             this.menuOpenFile.Text = "Open..";
             this.menuOpenFile.Click += new System.EventHandler(this.menuOpenFile_Click);
             // 
             // saveAs
             // 
             this.saveAs.Name = "saveAs";
-            this.saveAs.Size = new System.Drawing.Size(112, 22);
+            this.saveAs.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveAs.Size = new System.Drawing.Size(152, 22);
             this.saveAs.Text = "Save as";
             this.saveAs.Click += new System.EventHandler(this.saveAs_Click);
             // 
@@ -121,28 +122,32 @@
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.cutToolStripMenuItem.Text = "Cut";
             this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
@@ -209,12 +214,6 @@
             this.showTemporalToolStripMenuItem.Text = "Show temporal";
             this.showTemporalToolStripMenuItem.Click += new System.EventHandler(this.showTemporalToolStripMenuItem_Click);
             // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "Help";
-            // 
             // chart1
             // 
             chartArea1.Name = "ChartArea1";
@@ -266,6 +265,7 @@
             // 
             // zoomButton
             // 
+            this.zoomButton.Image = global::WaveProject.Properties.Resources.magnifier;
             this.zoomButton.Location = new System.Drawing.Point(243, 27);
             this.zoomButton.Name = "zoomButton";
             this.zoomButton.Size = new System.Drawing.Size(75, 23);
@@ -348,7 +348,6 @@
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart2;
         private System.Windows.Forms.ToolStripMenuItem menuOpenFile;

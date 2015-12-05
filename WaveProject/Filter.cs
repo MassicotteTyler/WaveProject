@@ -30,23 +30,30 @@ namespace WaveProject
 
             //Always keep the DC component
             temp[0] = new Complex(1, 1);
-            int i, k;
-            for (i = 1, k = temp.Length - 1; i < selection; i++, k--)
+            int front, end;
+            for (front = 1, end = temp.Length - 1; front < selection; front++, end--)
             {
-                temp[i] = new Complex(1, 1);
-                temp[k] = new Complex(1, 1);
+                temp[front] = new Complex(1, 1);
+                temp[end] = new Complex(1, 1);
             }
-            for (i = selection; i < temp.Length / 2 + 1; i++, k--)
+            for (front = selection; front < temp.Length / 2 + 1; front++, end--)
             {
-                temp[i] = new Complex(0, 0);
-                temp[k] = new Complex(0, 0);
+                temp[front] = new Complex(0, 0);
+                temp[end] = new Complex(0, 0);
             }
 
+            //Get the weights
             filter = DFT.iDft(temp);
 
             return filter;
         }
 
+
+        /*****************************************************************
+        * Takes in 2 double arrays, one being wave samples and the other
+        * being a filter of weights to apply. it then applies the weights to
+        * the samples and returns the newly filtered sample.
+        ******************************************************************/
         public static double[] apply_filter(double[] samples, double[] filter)
         {
             double[] result = new double[samples.Length];
@@ -55,7 +62,7 @@ namespace WaveProject
                 double temp = 0;
                 for (int j = 0; j < filter.Length; j++)
                 {
-                    if ((i + j) < (samples.Length - 1))
+                    if ((i + j) < (samples.Length))
                         temp += samples[i + j] * filter[j];
                     else
                         temp += 0;
@@ -65,6 +72,10 @@ namespace WaveProject
             return result;
         }
 
+        /*****************************************************************
+        * Takes in a double array of wave samples and applies the Hanning
+        * windowing function to it. It returns the newly weighted samples.
+        ******************************************************************/
         public static double[] hanning_window(double[] samples)
         {
             double[] output = new double[samples.Length];
@@ -76,6 +87,10 @@ namespace WaveProject
             return output;
         }
 
+        /*****************************************************************
+        * Takes in a double array of wave samples and applies the Rectangle
+        * windowing function to it. It returns the newly weighted samples.
+        ******************************************************************/
         public static double[] rectangle_window(double[] samples)
         {
             double[] output = new double[samples.Length];
@@ -87,6 +102,10 @@ namespace WaveProject
             return output;
         }
 
+        /*****************************************************************
+        * Takes in a double array of wave samples and applies the Triangle
+        * windowing function to it. It returns the newly weighted samples.
+        ******************************************************************/
         public static double[] triangle_window(double[] samples)
         {
             double[] output = new double[samples.Length];
@@ -96,7 +115,6 @@ namespace WaveProject
                 output[i] = 1 - Math.Abs(((samples[i] - ((N - 1) / 2)) /
                                  (N / 2)));
             }
-
             return output;
         }
     }

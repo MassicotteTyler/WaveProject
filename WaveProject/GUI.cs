@@ -42,6 +42,8 @@ namespace WaveProject
             setup_charts();
             //Default to rectangle window
             window_selection = 0;
+            this.UseWaitCursor = true;
+            toggle_wait_cursor();
         }
 
 
@@ -57,6 +59,8 @@ namespace WaveProject
             chart1.ChartAreas[0].CursorX.IsUserEnabled = true;
             chart1.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
             chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = false;
+
+            selectButton.Enabled = false;
         }
 
         /*****************************************************************
@@ -127,9 +131,9 @@ namespace WaveProject
             }
 
             toggle_buttons(false);
-
+            toggle_wait_cursor();
             drawChart(wav.dataToDouble());
-
+            toggle_wait_cursor();
             toggle_buttons(true);
 
         }
@@ -188,6 +192,8 @@ namespace WaveProject
         {
             chart2.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
             chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            zoomButton.Enabled = false;
+            selectButton.Enabled = true;
         }
 
         /*****************************************************************
@@ -198,6 +204,8 @@ namespace WaveProject
         {
             chart2.ChartAreas[0].AxisX.ScaleView.Zoomable = false;
             chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = false;
+            zoomButton.Enabled = true;
+            selectButton.Enabled = false;
         }
 
         /*****************************************************************
@@ -222,9 +230,10 @@ namespace WaveProject
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int index = (int)chart2.ChartAreas[0].CursorX.SelectionEnd;
-
+            toggle_wait_cursor();
             wav.paste(index);
             drawChart(wav.data_double);
+            toggle_wait_cursor();
             return;
 
         }
@@ -273,8 +282,9 @@ namespace WaveProject
             getSelection(out start, out end);
 
             handle.copyData = wav.cut(start, end);
-
+            toggle_wait_cursor();
             drawChart(wav.data_double);
+            toggle_wait_cursor();
         }
 
 
@@ -308,7 +318,9 @@ namespace WaveProject
             if (handle.recordData != null)
             { 
                 wav = new Wav(handle.recordData);
+                toggle_wait_cursor();
                 drawChart(wav.dataToDouble());
+                toggle_wait_cursor();
                 playButton.Enabled = true;
 
             }
@@ -339,6 +351,10 @@ namespace WaveProject
         ******************************************************************/
         private void lowPassToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //If there is no dft data drawn do not attempt to create a filter.
+            if (wav.mag == null)
+                return;
+            toggle_wait_cursor();
             double[] filt = Filter.createFilter((int)chart1.ChartAreas[0].CursorX.SelectionStart, wav.mag);
             double[] fSample = Filter.apply_filter(wav.dataToDouble(), filt);
 
@@ -349,7 +365,8 @@ namespace WaveProject
                 handle.doubleToBytes(fSample[i], out samples[pos], out samples[++pos]);
             }
             wav.updateData(samples);
-            drawChart(fSample);
+            drawChart(wav.dataToDouble());
+            toggle_wait_cursor();
         }
 
         /*****************************************************************
@@ -392,21 +409,36 @@ namespace WaveProject
         {
             if (wav.getData() == null)
                 return;
+            toggle_wait_cursor();
             List<double> test = wav.dataToDouble().ToList();
             double[] nData;
             int start, end;
             getSelection(out start, out end);
             if (start - end == 0)
                 return;
-            nData = test.GetRange(start, (end - start)).ToArray();
+            nData = test.GetRange(start, (end - start) - 1).ToArray();
 
             wav.df = DFT.Dft(apply_window(nData));
             wav.selection = nData.ToArray();
             wav.mag = Complex.Mag(wav.df);
 
             drawDft(wav.mag);
+            toggle_wait_cursor();
         }
 
+        /************************************************************************
+        * Toggles the loading cursor on or off.
+        ************************************************************************/
+        private void toggle_wait_cursor()
+        {
+            this.UseWaitCursor = !(this.UseWaitCursor);
+            Application.DoEvents();
+        }
+
+        /************************************************************************
+        * Checks the currently selected window function and applies it to the dft
+        * data.
+        ************************************************************************/
         private double[] apply_window(double[] samples)
         {
             switch(window_selection)
@@ -468,43 +500,6 @@ namespace WaveProject
             clearWindowSelection();
             rectangleToolStripMenuItem.Checked = true;
         }
-
-
-        /*****************************************************************
-        * Process the key presses made while this window is in focus.
-        * If Control + C are pressed, Copy is called.
-        * If Control + X are pressed, Cut is called.
-        * If Control + V are pressed, Paste is called.
-        * If Delete is pressed, Delete is called.
-        ******************************************************************/
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if (keyData == (Keys.Control | Keys.C))
-            {
-                copyToolStripMenuItem_Click(this, null);
-                return true;
-            }
-
-            if (keyData == (Keys.Control | Keys.X))
-            {
-                cutToolStripMenuItem_Click(this, null);
-                return true;
-            }
-            if (keyData == (Keys.Control | Keys.V))
-            {
-                pasteToolStripMenuItem_Click(this, null);
-                return true;
-            }
-
-            if (keyData == (Keys.Delete))
-            {
-                deleteToolStripMenuItem_Click(this, null);
-                return true;
-            }
-            return base.ProcessCmdKey(ref msg, keyData);
-        }
-
-
         /*****************************************************************
         * Gets Called when the user clicks on the delete menu item. Calls
         * the wav delete function on the data selected by the user and draws
