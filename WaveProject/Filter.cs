@@ -6,19 +6,29 @@ using System.Threading.Tasks;
 
 namespace WaveProject
 {
+    /********************************************************
+    * The Filtering class houses the methods for creating and 
+    * applying filters. As well as the methods that apply window
+    * functions to samples.
+    **********************************************************/
     class Filter
     {
 
-        public Filter()
-        {
-
-        }
-
+        /********************************************************
+        * Create filter takes in a double array of samples and an
+        * int to specify where to make the cut off point for the
+        * lowpass filter. It then creates an array of complex numbers
+        * that have values of 1's or 0's. One to specify to keep that
+        * corresponding frequency. 0 to remove the frequency. The 
+        * array of complex numbers are then passed through iDft to get
+        * the weights of the filter. The filter is then returned.
+        **********************************************************/
         public static double[] createFilter(int selection, double[] samples)
         {
             double[] filter;
             Complex[] temp = new Complex[samples.Length];
 
+            //Always keep the DC component
             temp[0] = new Complex(1, 1);
             int i, k;
             for (i = 1, k = temp.Length - 1; i < selection; i++, k--)

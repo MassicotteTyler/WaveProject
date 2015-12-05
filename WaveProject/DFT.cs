@@ -7,19 +7,29 @@ using System.Threading;
 
 namespace WaveProject
 {
+    /********************************************************
+    * The DFT classes houses functions used to apply the 
+    * Discrete Fourier Transform onto wave samples. As well as
+    * preform inverse Discrete Fourier Transform.
+    **********************************************************/
     class DFT
     {
 
-
+        /********************************************************
+        * DFT takes in an array of samples and applies the Discrete
+        * Fourier Transform to them. The output is rendered as an
+        * array of complex numbers. The method splits the array 
+        * into 2 parts which a thead to work on each.
+        **********************************************************/
         public static Complex[] Dft(double[] samples)
         {
             int N = samples.Length;
             Thread thread1, thread2;
-            //Setup threadpool que
-            Complex[] output = new Complex[N];
-            Complex[] temp1 = new Complex[N / 2];
-            Complex[] temp2 = new Complex[N / 2];
 
+            Complex[] output = new Complex[N];
+
+            //First half of dft. Uses a lambda expression to
+            //only run the first half.
             var subDft1 = new Action<double[]>(samp => 
             {
                 for (int k1 = 0; k1 < N / 2 + 1; k1++)
@@ -35,6 +45,8 @@ namespace WaveProject
                 }
             });
             
+            //Second half of the DFT function. Also uses
+            // a lambda expression to calculate the second half.
             var subDft2 = new Action<double[]>(samp =>
             {
                 for (int k = N / 2 + 1; k < N; k++)
@@ -54,9 +66,12 @@ namespace WaveProject
             thread1 = new Thread(() => subDft1(samples), 1024 * 1024);
             thread2 = new Thread(() => subDft2(samples), 1024 * 1024);
 
+            //Start both threads.
             thread1.Start();
             thread2.Start();
 
+            //Wait for both threads to finish. thread2 still runs
+            //while thread1's join method as been called.
             thread1.Join();
             thread2.Join();
 
@@ -65,6 +80,12 @@ namespace WaveProject
         }
 
 
+        /********************************************************
+        * iDft takes in an array of complex numbers and applies the
+        * inverse Discrete Fourier Transform algorithm to them. The
+        * output is renered as an array of doubles. The method splits
+        * up the main algorithm into 2 halfs and threads each half 
+        **********************************************************/
         public static double[] iDft(Complex[] input)
         {
             int N = input.Length;
@@ -116,10 +137,5 @@ namespace WaveProject
 
             return output;
         }
-
-
-
-
-
     }
 }

@@ -369,6 +369,15 @@ namespace WaveProject
         private void hanningToolStripMenuItem_Click(object sender, EventArgs e)
         {
             window_selection = 2;
+            clearWindowSelection();
+            hanningToolStripMenuItem.Checked = true;
+        }
+
+        private void clearWindowSelection()
+        {
+            rectangleToolStripMenuItem.Checked = false;
+            triangleToolStripMenuItem.Checked = false;
+            hanningToolStripMenuItem.Checked = false;
         }
 
 
@@ -387,7 +396,8 @@ namespace WaveProject
             double[] nData;
             int start, end;
             getSelection(out start, out end);
-            
+            if (start - end == 0)
+                return;
             nData = test.GetRange(start, (end - start)).ToArray();
 
             wav.df = DFT.Dft(apply_window(nData));
@@ -442,6 +452,8 @@ namespace WaveProject
         private void rectangleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             window_selection = 0;
+            clearWindowSelection();
+            rectangleToolStripMenuItem.Checked = true;
         }
 
 
@@ -453,6 +465,8 @@ namespace WaveProject
         private void triangleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             window_selection = 1;
+            clearWindowSelection();
+            rectangleToolStripMenuItem.Checked = true;
         }
 
 
