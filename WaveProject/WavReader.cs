@@ -1,4 +1,5 @@
-﻿using System;
+﻿//Tyler Massicotte A00855150 2015
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,15 +8,24 @@ using System.IO;
 
 namespace WaveProject
 {
+    /********************************************************
+    * The WavReader class is responsible for reading a wav file
+    * from a specified location. It creates a Wav object and stores
+    * the data read into it.
+    **********************************************************/
     class WavReader
     {
 
-        public Byte[] readFile(Stream stream, out double[] left, out double[] right, out Wav file)
+        /********************************************************
+        * readFile takes in a filestream and has an out parameter
+        * wav object. It reads in the specified wav file. Allocating
+        * the first 44 bytes to as the format header. It checks the
+        * fmtsize as this program only handles FMT 16 and PCM.
+        * once all the data has been read the wav file is assigned.
+        **********************************************************/
+        public static void readFile(Stream stream, out Wav file)
         { 
             Wav waveFile = new Wav();
-
-            left = null;
-            right = null;
             BinaryReader reader = new BinaryReader(stream);
             //Read the wave file header from the buffer
 
@@ -29,8 +39,6 @@ namespace WaveProject
             waveFile.head.sampleRate = reader.ReadUInt32();
             waveFile.head.fmtAvgBPS = reader.ReadUInt32();
             waveFile.head.fmtBlockAlign = reader.ReadUInt16();
-            //waveFile.head.subChunk2id = reader.ReadInt16();
-            //waveFile.head.subChunk2Size = reader.ReadInt16();
             waveFile.head.bitDepth = reader.ReadUInt16();
             waveFile.head.dataID = reader.ReadBytes(4);
             waveFile.head.dataSize = reader.ReadUInt32();
@@ -39,67 +47,16 @@ namespace WaveProject
             if (waveFile.head.fmtSize != 16) //only fmt to read for now
             {
                 file = null;
-                return null; 
-            }
-            if (waveFile.head.fmtSize == 18) //implement later
-            {
-                // Read any extra values
-                waveFile.head.fmtExtraSize = reader.ReadInt16();
-                reader.ReadBytes(waveFile.head.fmtExtraSize);
+                return;
             }
 
-            //waveFile.head.dataID = reader.ReadInt32();
-            //waveFile.head.dataSize = reader.ReadInt32();
-            waveFile.num_samples = (uint)(waveFile.head.dataSize /
-                         (waveFile.head.channels * waveFile.head.bitDepth) / 8);
+            //Read the sample data and add it to the wav object.
+            waveFile.setData(reader.ReadBytes((int)waveFile.head.dataSize));
 
-
-            // Store the audio data of the wave file to a byte array. 
-
-            //for (int j = 0; j < waveFile.head.dataSize / waveFile.head.fmtBlockAlign; j++)
-            //{
-            //    lData.Add((short)reader.ReadUInt16());
-            //    rData.Add((short)reader.ReadUInt16());
-            //}
-
-            waveFile.setData(reader.ReadBytes((int)waveFile.head.dataSize/ waveFile.head.fmtBlockAlign));
-
-            //After this you have to split that byte array for each channel (Left, Right)
-            //only worrying about dual channel for now
-            if (waveFile.head.channels == 1)
-            {
-                left = new double[waveFile.num_samples];
-            }
-            else if (waveFile.head.channels == 2)
-            {
-                left = new double[waveFile.num_samples/2];
-                right = new double[waveFile.num_samples/2];
-            }
-            int i = 0;
-            int pos = 0;
-            while (pos < waveFile.getData().Length-1 && i < left.Length-1)
-            {
-                left[i] = byteToDouble(waveFile.getData()[pos], waveFile.getData()[pos + 1]);
-                pos += 2;
-                if (waveFile.head.channels == 2)
-                {
-                    right[i] = byteToDouble(waveFile.getData()[pos], waveFile.getData()[pos + 1]);
-                    pos += 2;
-                }
-                i++;
-
-            }
-
+            //Assign the wav object to the out parameter.
             file = waveFile;
-            //Wav supports many channels, so you have to read channel from header
-            return waveFile.getData();
         }
 
-        static double byteToDouble(byte firstByte, byte secondByte)
-        {
-            short s = (short)((secondByte << 8) | firstByte);
-            return s / 32768.0;
-        }
     }
 
     

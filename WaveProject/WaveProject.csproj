@@ -48,7 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Complex.cs" />
     <Compile Include="DFT.cs" />
+    <Compile Include="Filter.cs" />
     <Compile Include="GUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -56,6 +58,12 @@
       <DependentUpon>GUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Handler.cs" />
+    <Compile Include="MainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Wav.cs" />
@@ -63,6 +71,9 @@
     <Compile Include="WavWriter.cs" />
     <EmbeddedResource Include="GUI.resx">
       <DependentUpon>GUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -87,9 +98,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DFT\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="DFT.dll" />
     <None Include="Resources\magnifier.png" />
